@@ -38,7 +38,7 @@ const httpBitacoras = {
                         _id: 1,
                         createdAt: { 
                             $dateToString: { 
-                                format: "%d/%m/%Y %H:%M:%S", 
+                                format: "%d/%m/%Y ", 
                                 date: "$createdAt",
                                 timezone: "America/Bogota"
                             } 
@@ -67,11 +67,14 @@ const httpBitacoras = {
     getListarTodo: async (req, res) => {
         try {
             const { FechaInicial, FechaFinal } = req.query;
+            // console.log(req);
+            
 
             // Validar que las fechas estén proporcionadas
             if (!FechaInicial || !FechaFinal) {
                 return res.status(400).json({ mensaje: "Fechas no proporcionadas" });
             }
+        
             // Convertir las fechas a objetos Date
             const fechaInicial = new Date(FechaInicial);
             const fechaFinal = new Date(FechaFinal);
@@ -112,9 +115,9 @@ const httpBitacoras = {
                     $project: {
                         _id: 1,
                         // FechaHora:1,
-                        FechaHora: { 
+                        createdAt: { 
                             createdAt: { 
-                                format: "%d/%m/%Y %H:%M:%S", 
+                                format: "%d/%m/%Y ", 
                                 date: "$createdAt",
                                 timezone: "America/Bogota" // Cambia esto según la zona horaria que desees usar
                             } 
