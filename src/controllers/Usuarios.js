@@ -12,6 +12,7 @@ const { config } = require("dotenv");
 const { usuarioHelper } = require("../helpers/Usuarios");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const { log } = require("console");
 
 const httpUsarios = {
   // listar----------------------------------------------------------------------------------------------------------
@@ -63,9 +64,9 @@ const httpUsarios = {
       const validPassword = bcryptjs.compareSync(Password, usuario.Password);
       if (!validPassword) {
         return res.status(401).json({
-            mensaje: "Usuario / Password no son correctos",
+          mensaje: "Usuario / Password no son correctos",
         });
-    }
+      }
 
       const token = await generarJWT(usuario._id);
       return res.json({
@@ -84,7 +85,7 @@ const httpUsarios = {
   putUsuarioActualizar: async (req, res) => {
     const { id } = req.params;
     try {
-      const { Email,Nombre } = req.body;
+      const { Email, Nombre } = req.body;
       const usuario = await Usuarios.findById(id);
       if (usuario) {
         usuario.Email = Email;
@@ -143,86 +144,117 @@ const httpUsarios = {
 
   // // Solicitar recuperación de contraseña------------------------------------------------------------------------------------
 
-  // solicitarRecuperacionContrasena : async (req, res) => {
-  //   const { Email } = req.body;
-  //   try {
-  //     const usuario = await Usuarios.findOne({ Email });
-  //     if (!usuario) {
-  //       return res.status(404).json({ mensaje: "No existe usuario con ese email" });
-  //     }
-  //     // res.json('E usuario es correcto')
+  solicitarRecuperacionContrasena: async (req, res) => {
+    const { Email } = req.body;
+    try {
+      const usuario = await Usuarios.findOne({ Email });
 
-  //     // // Crear un token único para el usuario
-  //     const token = crypto.randomBytes(20).toString('hex');
+      if (!usuario) {
+        return res.status(404).json({ mensaje: "No existe usuario con ese email" });
+      }
+      // res.json('El usuario es correcto')
 
-  //     // // Establecer la fecha de expiración del token
-  //     usuario.resetPasswordToken = token;
-  //     usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+      // // Crear un token único para el usuario
+      // const token = crypto.randomBytes(20).toString('hex');
 
-  //     await usuario.save();
+      // // Establecer la fecha  expiración del token
+      // usuario.resetPasswordToken = token;
+      
 
-  //     // Configurar el transporter para enviar correos
-  //     const transporter = nodemailer.createTransport({
-  //       service: "Gmail",
-  //       auth: {
-  //         user: process.env.EMAIL_USER,
-  //         pass: process.env.EMAIL_PASS,
-  //       },
-  //     });
+// console.log('este es el token',token);
+// console.log(resetPasswordToken);
 
-  //     // Enviar correo con el enlace para restablecer la contraseña
-  //     const mailOptions = {
-  //       to: usuario.Email,
-  //       from: process.env.EMAIL_USER,
-  //       subject: "Recuperación de Contraseña",
-  //       text: `Estás recibiendo esto porque tú (o alguien más) ha solicitado restablecer la contraseña de tu cuenta.\n\n
-  //       Haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso:\n\n
-  //       http://${req.headers.host}/reset/${token}\n\n
-  //       Si no solicitaste esto, simplemente ignora este correo y tu contraseña no cambiará.\n`,
-  //     };
+usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+  const codigoVerificacion = Math.floor(100000 + Math.random() * 900000); // Genera un código de 6 dígitos
+      usuario.resetPasswordCodigo = codigoVerificacion;
+      await usuario.save();
+      // Configurar el transporter para enviar correos
+      const transporter = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
 
-  //     transporter.sendMail(mailOptions, (err) => {
-  //       if (err) {
-  //         return res.status(500).json({ mensaje: "Error enviando el correo" });
-  //       }
-  //       res.json({ mensaje: "Correo enviado con éxito" });
-  //     });
+      //     // Enviar correo con el enlace para restablecer la contraseña
+    
 
-  //   } catch (error) {
-  //     // res.status(500).json({ error });
-  //     res.status(500).json({ error: error.message || "Error desconocido" });
-  //   }
-  // },
+      
+      
+      const mailOptions = {
+        to: usuario.Email,
+        from: process.env.EMAIL_USER,
+        subject: "Recuperación de Contraseña",
+        text: `Estás recibiendo esto porque tú (o alguien más) ha solicitado restablecer la contraseña de tu cuenta.\n\n
+        Haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso:\n\n
+        ${codigoVerificacion}
+        Si no solicitaste esto, simplemente ignora este correo y tu contraseña no cambiará.\n`,
+      };
+
+      transporter.sendMail(mailOptions, (err) => {
+        if (err) {
+          return res.status(500).json({ mensaje: "Error enviando el correo" });
+        }
+        res.json({ mensaje: "Correo enviado con éxito" });
+      });
+
+    } catch (error) {
+      // res.status(500).json({ error });
+      res.status(500).json({ error: error.mensaje || "Error desconocido" });
+    }
+  },
+
+
+  // Ruta de verificacion de codigo
+  postVerificarCodigo: async (req, res) => {
+    const { Email, Codigo } = req.body
+    try {
+      const usuario = await Usuarios.findOne({ Email })
+
+      if (!usuario || usuario.resetPasswordCodigo !== Codigo) {
+        return res.status(404).json({ mensaje: "Código incorrecto o expirado" })
+
+      }
+      if (Date.now() > usuario.resetPasswordExpires) {
+        return res.status(404).json({ mensaje: "El código ha expirado" })
+      }
+      res.json({ mensaje: "Código verificado correctamente" })
+    } catch (error) {
+      res.status(500).json({ error: error.mensaje || "Error desconocido" });
+    }
+  },
   // // Restablecer contraseña---------------------------------------------------------------------------------------------------------------------
-  // restablecerContrasena : async (req, res) => {
-  //   const { token } = req.params;
-  //   const { Password } = req.body;
+  restablecerContrasena: async (req, res) => {
+    const { id  } = req.params;
+    const { oldpassword, Password } = req.body;
 
-  //   try {
-  //     const usuario = await Usuarios.findOne({
-  //       resetPasswordToken: token,
-  //       resetPasswordExpires: { $gt: Date.now() },
-  //     });
+    try {
+      // const usuario = await Usuarios.findOne({
+      //   resetPasswordToken: token,
+      //   resetPasswordExpires: { $gt: Date.now() },
+      // });
+      const  usuario = await Usuarios.findById(id)
+      if (!usuario) {
+        return res.status(400).json({ mensaje: "El usuario no existe" });
+      }
 
-  //     if (!usuario) {
-  //       return res.status(400).json({ mensaje: "Token inválido o ha expirado" });
-  //     }
+      if (!bcryptjs.compareSync(oldpassword, usuario.Password)) {
+        return res.status(401).json({ mensaje: "la contraseña es incorrecta" });
+      }
 
-  //     // Actualizar la contraseña del usuario
-  //     const salt = bcryptjs.genSaltSync(10);
-  //     usuario.Password = bcryptjs.hashSync(Password, salt);
+      // Actualizar la contraseña del usuario
+      const salt = bcryptjs.genSaltSync(10);
+      usuario.Password = bcryptjs.hashSync(Password, salt);
 
-  //     // Limpiar los campos de reset password
-  //     usuario.resetPasswordToken = undefined;
-  //     usuario.resetPasswordExpires = undefined;
 
-  //     await usuario.save();
+      await usuario.save();
 
-  //     res.json({ mensaje: "Contraseña restablecida correctamente" });
-  //   } catch (error) {
-  //     res.status(500).json({ error });
-  //   }
-  // }
+      res.json({ mensaje: "Contraseña restablecida correctamente" });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
 };
 
 module.exports = { httpUsarios };

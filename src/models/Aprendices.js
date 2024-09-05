@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const aprendicesSchema = new mongoose.Schema({
     Documento:{ type:String, require:true, unique:true, min:10},
-    Nombre:{type:String, require:true},
+    Nombre:{type:String, require:true, max:20},
     Telefono:{type:String, require, unique:true, min:10},
     Email:{type:String, require, unique:true},
     Estado:{type:Number, require:true, default:1},

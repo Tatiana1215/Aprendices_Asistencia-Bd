@@ -31,9 +31,8 @@ validarJWT
 // ----------------------------------------------------------------------------------------------------
 routers.post("/Insertar",[
     // validarJWT,
-    // check('Id_Aprendiz','El id aprendiz no es valido').isMongoId,
+    check('Id_Aprendiz','El id aprendiz no es valido').isMongoId(),
     check('Id_Aprendiz', 'El campo id del aprendiz es onbligatorio').notEmpty(),
-    // check('FechaHora', 'El campo de fecha y hora es obligatorio').notEmpty(),
     check("Id_Aprendiz").custom(bitacoraHelper.existeIdAprendiz),
     check("Id_Aprendiz").custom(bitacoraHelper.unicoIdAprendiz),
     validarCampos,
@@ -41,9 +40,14 @@ routers.post("/Insertar",[
 
 // -------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id",[
+    validarJWT,
     check('id','El id es invalido').isMongoId(),
     validarCampos,
-    validarJWT
+
 ],httpBitacoras.putModificarBitacora)
 
+// ----------------------------------------------------------------------------------------------------------
+routers.put("/actualizarEstado/:id",[
+
+],httpBitacoras.putActualizarEstado)
 module.exports = routers

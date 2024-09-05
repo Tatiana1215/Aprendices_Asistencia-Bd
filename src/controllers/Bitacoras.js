@@ -36,12 +36,13 @@ const httpBitacoras = {
                 {
                     $project: {
                         _id: 1,
-                        createdAt: { 
-                            $dateToString: { 
-                                format: "%d/%m/%Y ", 
+                        Estado:1,
+                        createdAt: {
+                            $dateToString: {
+                                format: "%d/%m/%Y %H:%M:%S",
                                 date: "$createdAt",
                                 timezone: "America/Bogota"
-                            } 
+                            }
                         },
                         'nombreAprendiz': '$aprendizInfo.Nombre',
                         'telefonoAprendiz': '$aprendizInfo.Telefono',
@@ -68,13 +69,13 @@ const httpBitacoras = {
         try {
             const { FechaInicial, FechaFinal } = req.query;
             // console.log(req);
-            
+
 
             // Validar que las fechas estén proporcionadas
             if (!FechaInicial || !FechaFinal) {
                 return res.status(400).json({ mensaje: "Fechas no proporcionadas" });
             }
-        
+
             // Convertir las fechas a objetos Date
             const fechaInicial = new Date(FechaInicial);
             const fechaFinal = new Date(FechaFinal);
@@ -86,7 +87,8 @@ const httpBitacoras = {
             const bitacoras = await Bitacoras.aggregate([
                 {
                     $match: {
-                        FechaHora: { $gte: fechaInicial, $lte: fechaFinal }
+                        createdAt: {    $gte: fechaInicial,
+                            $lte: fechaFinal }
                     }
                 },
                 {
@@ -115,27 +117,29 @@ const httpBitacoras = {
                     $project: {
                         _id: 1,
                         // FechaHora:1,
-                        createdAt: { 
-                            createdAt: { 
-                                format: "%d/%m/%Y ", 
+                        Estado:1,
+                        createdAt: {
+                            $dateToString: {
+                                format: "%d/%m/%Y %H:%M:%S",
                                 date: "$createdAt",
-                                timezone: "America/Bogota" // Cambia esto según la zona horaria que desees usar
-                            } 
+                                timezone: "America/Bogota"
+                            }
                         },
                         'nombreAprendiz': '$aprendizInfo.Nombre', // Asume que el campo del nombre es 'Nombre'
-                        'telefonoAprendiz':'$aprendizInfo.Telefono',
-                        'emailAprendiz':'$aprendizInfo.Email',
+                        'telefonoAprendiz': '$aprendizInfo.Telefono',
+                        'emailAprendiz': '$aprendizInfo.Email',
                         'nombreFicha': '$fichaInfo.Nombre' // Asume que el campo del nombre de la ficha es 'Nombre'
                     }
                 }
             ]);
-     
+
             // Responder con los resultados de la búsqueda
             if (bitacoras.length > 0) {
                 res.json(bitacoras);
             } else {
-                res.json({ mensaje: "No hay bitácoras en el rango de fechas proporcionado" }
-                )}
+                res.json({ msg: "No hay bitácoras en el rango de fechas proporcionado" }
+                )
+            }
         } catch (error) {
             console.error("Error en getListarBitacoras:", error);
             res.status(500).json({ error: error.message });
@@ -173,8 +177,15 @@ const httpBitacoras = {
                 {
                     $project: {
                         _id: 1,
+                        Estado:1,
                         Id_Aprendiz: 1,
-                        createdAt: 1,
+                        createdAt: {
+                            $dateToString: {
+                                format: "%d/%m/%Y ",
+                                date: "$createdAt",
+                                timezone: "America/Bogota"
+                            }
+                        },
                         'Aprendiz.Id_Ficha': 1,
                         'Aprendiz.Documento': 1,
                         'Aprendiz.Nombre': 1
@@ -210,7 +221,7 @@ const httpBitacoras = {
     // Insertar bitacora----------------------------------------------------------------------------------------------------------------
     postInsertaBitacora: async (req, res) => {
         try {
-            const { Id_Aprendiz} = req.body
+            const { Id_Aprendiz } = req.body
             const bitacora = new Bitacoras({ Id_Aprendiz })
             const resultado = await bitacora.save()
             res.json({ mensaje: "Se inserto los datos correctamente", resultado })
@@ -236,7 +247,63 @@ const httpBitacoras = {
         } catch (error) {
             res.status(400).json({ error })
         }
+    },
+    // Actualizar Estado----------------------------------------------------------------------------------------------------------------
+    // putActualizarEstado: async (req, res) => {
+    //     const { id } = req.params
+    //     const { Estado } = req.body
+    //     try {
+
+    //         // const validEstados = ['Asistio', 'No Asistio', 'Excusa', 'Pendiente'];
+    //         // if (!validEstados.includes(Estado)) {
+    //         //     return res.status(400).json({ msg: "Estado no válido" });
+    //         // }
+
+    //         const bitacora = await Bitacoras.findByIdAndUpdate(id, { Estado }, { new: true })
+
+    //         if (!bitacora) {
+    //             res.status(404).json({ msg: 'Bitacora no encontrada' })
+    //         }
+    //         await bitacora.save()
+    //         res.json(bitacora)
+    //     } catch (error) {
+    //         console.log('error al actualizar estado', error)
+    //         res.status(500).json({ error: 'Error al actualizar estado' })
+    //     }
+    // }
+    putActualizarEstado: async (req, res) => {
+        const { id } = req.params;
+        const { Estado } = req.body;
+    
+        try {
+            const validEstados = ['Asistio', 'No Asistio', 'Excusa', 'Pendiente'];
+            console.log("Estado recibido en el servidor:", Estado);
+    
+            // Verificar si el estado es válido
+            if (!validEstados.includes(Estado)) {
+                console.log("Estado no válido:", Estado);
+                return res.status(400).json({ msg: "Estado no válido" });
+            }
+    
+            // Buscar la bitácora por ID y actualizar el estado
+            const bitacora = await Bitacoras.findByIdAndUpdate(id, { Estado }, { new: true });
+    
+            // Verificar si se encontró la bitácora
+            if (!bitacora) {
+                return res.status(404).json({ msg: 'Bitacora no encontrada' });
+            }
+    
+            // Guardar la bitácora actualizada
+            await bitacora.save();
+    
+            // Enviar la respuesta con la bitácora actualizada
+            res.json(bitacora);
+        } catch (error) {
+            console.error('Error al actualizar estado:', error.message);
+            res.status(500).json({ error: 'Error al actualizar estado' });
+        }
     }
+    
 
 }
 module.exports = { httpBitacoras }

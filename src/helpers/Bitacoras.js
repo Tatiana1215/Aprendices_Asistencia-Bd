@@ -1,4 +1,3 @@
-
 const Bitacora = require("../models/Bitacoras")
 
 const bitacoraHelper = {
@@ -8,11 +7,14 @@ const bitacoraHelper = {
         throw new Error("EL ID del aprendiz no existe")
     }
 },
+
 unicoIdAprendiz: async (Id_Aprendiz)=>{
-    const unico = await Bitacora.findById({Id_Aprendiz})
-    if(unico){
-        throw new Error("El id del aprendiz ya existe")
+    const unico = await Bitacora.find({Id_Aprendiz: Id_Aprendiz})
+    if (unico.length > 0) {
+        throw new Error("El id del aprendiz ya existe");
     }
-}
+},
+
+
 }
 module.exports = {bitacoraHelper}

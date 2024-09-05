@@ -10,7 +10,7 @@ const nodemailer = require('nodemailer');
 
 // -----------------------------------------------------------------------------------------------------------------------------------
 routers.get("/listarTodos",[
-    validarCampos,
+    // validarCampos,
     // validarJWT
 ],httpUsarios.getUsuarios)
 
@@ -25,7 +25,7 @@ check('Nombre','El campo Nombre es obligatorio').notEmpty(),
 check('Email','El campo Email es obligatorio').notEmpty(),
 check('Password','El campo password es obligatorio').notEmpty(),
 check('Email').custom(usuarioHelper.existsEmail),
-check('Password').custom(usuarioHelper.existePassword),
+// check('Password').custom(usuarioHelper.existePassword),
 check('Nombre','El Nombre debe tener maximo 30 caracteres').isLength({max:30}),
 check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
 validarCampos,
@@ -38,15 +38,27 @@ routers.post('/login',[
     validarCampos
 ], httpUsarios.postLogin)
 
-// // Ruta para solicitar recuperación de contraseña-----------------------------------------------------------------------------------------
-// routers.post('/solicitar-recuperacion', [
-//     // validarJWT
-// ],httpUsarios.solicitarRecuperacionContrasena);
+// Ruta para solicitar recuperación de contraseña-----------------------------------------------------------------------------------------
+routers.post('/solicitar-recuperacion', [
+    // validarJWT
+    check('Email','El campo email es obligatorio').notEmpty(),
+    validarCampos
+],httpUsarios.solicitarRecuperacionContrasena);
+// ruta de verificacion
+routers.post('/Verificacion',[
+    check('Email','El campo email es obligatorio').notEmpty(),
+    check('Codigo' , 'El campo Codigo es obligatorio').notEmpty(),
+    validarCampos 
+],httpUsarios.postVerificarCodigo );
 
-// // Ruta para restablecer la contraseña-----------------------------------------------------------------------------------------------------
-// routers.post('/reset/:token', [
-//     // validarJWT
-// ],httpUsarios.restablecerContrasena);
+// Ruta para restablecer la contraseña-----------------------------------------------------------------------------------------------------
+routers.post('/reset/:id', [
+    check('oldpassword', 'El campo de la contraseña actual es obligatorio').notEmpty(),
+    check('Password', 'El campo del password es obligatorio').notEmpty(),
+    check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
+    // validarJWT
+    validarCampos
+],httpUsarios.restablecerContrasena);
 
 // // -----------------------------------------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id",[

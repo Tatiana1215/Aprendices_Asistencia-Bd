@@ -34,6 +34,7 @@ routers.post("/Insertar", [
     check('Documento').custom(aprendizHelper.existeDocumento),
     check('Documento', 'El numero de documento debe se maximo de 10 caracteres ').isLength({ min: 10 }),
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
+    check('Nombre', 'El Nombre debe tener maximo 20 caracteres').isLength({max:20}),
     check('Telefono', 'El campo telefono es obligatorio').notEmpty(),
     check('Telefono', 'El numero de telefono debe tener 10 digitos').isLength({ min: 10 }),
     check('Email', 'El campo email es obligatorio').notEmpty(),
@@ -49,6 +50,11 @@ routers.put("/Actualizar/:id", [
     check('id', 'El id no es valido').isMongoId(),
     check('Documento', 'El numero de documento debe se maximo de 10 caracteres ').isLength({ min: 10, max: 10 }),
     check('Telefono', 'El numero de telefono debe tener 10 digitos').isLength({ min: 10, max: 10 }),
+    check('Nombre', 'El Nombre debe tener maximo 20 caracteres').isLength({max:20}),
+    check('Documento').custom(async (Documento, { req }) => {
+        await aprendizHelper.esDocumentoId(Documento, req.params.id);
+    }),
+    
     validarCampos,
     // validarJWT
 ], httpAprendiz.putAprendiz)
