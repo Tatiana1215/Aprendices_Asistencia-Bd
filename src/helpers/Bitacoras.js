@@ -1,4 +1,5 @@
-const Bitacora = require("../models/Bitacoras")
+// const Bitacora = require("../models/Bitacoras")
+import Bitacora from "../models/Bitacoras.js"
 
 const bitacoraHelper = {
     existeIdAprendiz: async (Id_Aprendiz)=>{
@@ -17,4 +18,4 @@ unicoIdAprendiz: async (Id_Aprendiz)=>{
 
 
 }
-module.exports = {bitacoraHelper}
+export {bitacoraHelper}

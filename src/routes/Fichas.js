@@ -1,9 +1,16 @@
-const { Router } = require("express")
-const { check } = require("express-validator")
-const { validarCampos } = require('../middlewares/validar-campos')
-const { validarJWT } = require('../middlewares/validarJWT')
-const { httpFichas } = require("../controllers/Fichas")
-const { fichaHelper } = require("../helpers/Fichas")
+import { check } from "express-validator"
+import { validarCampos } from "../middlewares/validar-campos.js"
+import {validarJWT} from "../middlewares/validarJWT.js"
+import {httpFichas} from "../controllers/Fichas.js"
+import { fichaHelper } from "../helpers/Fichas.js"
+import { Router } from "express"
+
+// const { Router } = require("express")
+// const { check } = require("express-validator")
+// const { validarCampos } = require('../middlewares/validar-campos')
+// const { validarJWT } = require('../middlewares/validarJWT')
+// const { httpFichas } = require("../controllers/Fichas")
+// const { fichaHelper } = require("../helpers/Fichas")
 // const { fichaHelper } = require("../helpers/Fichas")
 const routers = Router()
 
@@ -55,4 +62,4 @@ routers.put("/Desactivar/:id", [
     // validarJWT
 ], httpFichas.PutDesactivarFicha)
 
-module.exports = routers
+export default  routers

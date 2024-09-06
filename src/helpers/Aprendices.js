@@ -1,4 +1,5 @@
-const Aprendiz = require("../models/Aprendices");
+// const Aprendiz = require("../models/Aprendices");
+import Aprendiz from "../models/Aprendices.js"
 
 const aprendizHelper = {
     existeDocumento : async (Documento) => {
@@ -21,4 +22,4 @@ const aprendizHelper = {
     }
 
 }
-module.exports = {aprendizHelper}
+export {aprendizHelper}

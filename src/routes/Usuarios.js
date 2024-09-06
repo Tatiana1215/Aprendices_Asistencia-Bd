@@ -1,12 +1,20 @@
-const { check } = require("express-validator");
-const { validarCampos } = require("../middlewares/validar-campos");
-const { validarJWT } = require("../middlewares/validarJWT");
-const { httpUsarios } = require("../controllers/Usuarios");
-const { usuarioHelper } = require("../helpers/Usuarios");
-const { Router } = require("express")
+import { check } from "express-validator";
+import {validarCampos} from "../middlewares/validar-campos.js"
+import {validarJWT} from "../middlewares/validarJWT.js"
+import {httpUsarios} from "../controllers/Usuarios.js"
+import { usuarioHelper } from "../helpers/Usuarios.js";
+import { Router } from "express";
+import nodemailer from "nodemailer"
+
+// const { check } = require("express-validator");
+// const { validarCampos } = require("../middlewares/validar-campos");
+// const { validarJWT } = require("../middlewares/validarJWT");
+// const { httpUsarios } = require("../controllers/Usuarios");
+// const { usuarioHelper } = require("../helpers/Usuarios");
+// const { Router } = require("express")
 const routers = Router()
 
-const nodemailer = require('nodemailer');
+// const nodemailer = require('nodemailer');
 
 // -----------------------------------------------------------------------------------------------------------------------------------
 routers.get("/listarTodos",[
@@ -18,18 +26,6 @@ routers.get("/listarTodos",[
 //     validarCampos,
 // ])
 
-// -------------------------------------------------------------------------------------------------------------------------------------
-routers.post("/insertar",[
-    // validarJWT,
-check('Nombre','El campo Nombre es obligatorio').notEmpty(),
-check('Email','El campo Email es obligatorio').notEmpty(),
-check('Password','El campo password es obligatorio').notEmpty(),
-check('Email').custom(usuarioHelper.existsEmail),
-// check('Password').custom(usuarioHelper.existePassword),
-check('Nombre','El Nombre debe tener maximo 30 caracteres').isLength({max:30}),
-check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
-validarCampos,
-],httpUsarios.postUsuario)
 
 // --------------------------------------------------------------------------------------------------------------------------------------
 routers.post('/login',[
@@ -60,6 +56,20 @@ routers.post('/reset/:id', [
     validarCampos
 ],httpUsarios.restablecerContrasena);
 
+
+// -------------------------------------------------------------------------------------------------------------------------------------
+routers.post("/insertar",[
+    // validarJWT,
+check('Nombre','El campo Nombre es obligatorio').notEmpty(),
+check('Email','El campo Email es obligatorio').notEmpty(),
+check('Password','El campo password es obligatorio').notEmpty(),
+check('Email').custom(usuarioHelper.existsEmail),
+// check('Password').custom(usuarioHelper.existePassword),
+check('Nombre','El Nombre debe tener maximo 30 caracteres').isLength({max:30}),
+check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
+validarCampos,
+],httpUsarios.postUsuario)
+
 // // -----------------------------------------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id",[
     // validarJWT,
@@ -70,7 +80,6 @@ routers.put("/Actualizar/:id",[
     // check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
     check('Nombre','El Nombre debe tener maximo 30 caracteres').isLength({max:30}),
     check('Email').custom(async (Email, { req }) => {
-        // Aquí usamos el helper para la validación
         await usuarioHelper.esEmailid(Email, req.params.id);
     }),
     validarCampos
@@ -97,4 +106,4 @@ routers.delete("/Eliminar/:id",[
     validarJWT
 ], httpUsarios.deleteUsario)
 
-module.exports = routers
+export default routers

@@ -1,5 +1,6 @@
 
-const Usuario = require("../models/Usuarios")
+// const Usuario = require("../models/Usuarios.js")
+ import Usuario from "../models/Usuarios.js"
 
 const usuarioHelper = {
     existsEmail: async (Email)=>{
@@ -28,4 +29,4 @@ esEmailid: async (Email, id) => {
 }
 }
 
-module.exports = {usuarioHelper}
+export {usuarioHelper}

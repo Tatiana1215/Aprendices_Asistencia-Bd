@@ -14,7 +14,9 @@
 // request:pide y guarda el data
 // resolve: responde
 
-const Aprendiz = require('../models/Aprendices')
+// const Aprendiz = require('../models/Aprendices')
+import Aprendiz from '../models/Aprendices.js'
+
 const httpAprendiz ={
  //listar todos los aprendices-------------------------------------------------------------------------------
 getAprendicesListarTodo: async (req, res)=>{
@@ -118,4 +120,4 @@ putAprendizDesactivar: async (req, res)=>{
 }
 }
 
-module.exports = {httpAprendiz}
+export {httpAprendiz}

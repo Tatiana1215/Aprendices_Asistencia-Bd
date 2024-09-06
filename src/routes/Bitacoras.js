@@ -1,9 +1,17 @@
-const { check } = require("express-validator");
-const { validarCampos } = require("../middlewares/validar-campos");
-const { validarJWT, generarJWT } = require("../middlewares/validarJWT");
-const { httpBitacoras } = require("../controllers/Bitacoras");
-const { Router } = require("express");
-const { bitacoraHelper } = require("../helpers/Bitacoras");
+import { check } from "express-validator";
+import { validarCampos } from "../middlewares/validar-campos.js";
+import {validarJWT, generarJWT} from '../middlewares/validarJWT.js'
+import {httpBitacoras} from '../controllers/Bitacoras.js'
+import { bitacoraHelper } from "../helpers/Bitacoras.js";
+import { Router } from "express";
+
+
+// const { check } = require("express-validator");
+// const { validarCampos } = require("../middlewares/validar-campos");
+// const { validarJWT, generarJWT } = require("../middlewares/validarJWT");
+// const { httpBitacoras } = require("../controllers/Bitacoras");
+// const { Router } = require("express");
+// const { bitacoraHelper } = require("../helpers/Bitacoras");
 const routers = Router()
 routers.get("/listar",[
     validarJWT
@@ -50,4 +58,6 @@ routers.put("/Actualizar/:id",[
 routers.put("/actualizarEstado/:id",[
 
 ],httpBitacoras.putActualizarEstado)
-module.exports = routers
+
+
+export default  routers

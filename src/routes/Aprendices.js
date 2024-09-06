@@ -1,9 +1,17 @@
-const { check } = require("express-validator");
-const { validarCampos } = require("../middlewares/validar-campos");
-const { validarJWT } = require("../middlewares/validarJWT");
-const { httpAprendiz } = require("../controllers/Aprendices");
-const { aprendizHelper } = require("../helpers/Aprendices");
-const { Router } = require("express");
+
+import { check } from "express-validator";
+import { validarCampos } from "../middlewares/validar-campos.js";
+import {validarJWT} from '../middlewares/validarJWT.js'
+import {httpAprendiz} from '../controllers/Aprendices.js'
+import { aprendizHelper } from "../helpers/Aprendices.js";
+import { Router } from "express";
+
+// const { check } = require("express-validator");
+// const { validarCampos } = require("../middlewares/validar-campos");
+// const { validarJWT } = require("../middlewares/validarJWT");
+// const { httpAprendiz } = require("../controllers/Aprendices");
+// const { aprendizHelper } = require("../helpers/Aprendices");
+// const { Router } = require("express");
 
 const routers = Router()
 
@@ -73,5 +81,5 @@ routers.put("/Desactivar/:id", [
     // validarJWT
 ], httpAprendiz.putAprendizDesactivar)
 
-module.exports = routers
+export default routers
 

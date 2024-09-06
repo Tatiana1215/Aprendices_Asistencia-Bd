@@ -4,15 +4,13 @@
 // eliminar
 // Activar
 // Desactivar
+// import Usuarios from '../models/Usuarios.js'; 
+import Usuarios from '../models/Usuarios.js';
+import bcryptjs from "bcrypt";
+// import bcryptjs from "bcrypt";
+import { generarJWT } from '../middlewares/validarJWT.js';
+import crypto from 'crypto'
 
-const Usuarios = require("../models/Usuarios");
-const bcryptjs = require("bcryptjs");
-const { generarJWT } = require("../middlewares/validarJWT");
-const { config } = require("dotenv");
-const { usuarioHelper } = require("../helpers/Usuarios");
-const nodemailer = require("nodemailer");
-const crypto = require("crypto");
-const { log } = require("console");
 
 const httpUsarios = {
   // listar----------------------------------------------------------------------------------------------------------
@@ -109,9 +107,9 @@ const httpUsarios = {
     try {
       const usuario = await Usuarios.findByIdAndUpdate(id, { Estado: 1 }, { new: true });
       if (usuario) {
-        res.json({ mesaje: "Usuario Actualizado" });
+        res.json({ mesaje: "Usuario Activado" });
       } else {
-        res.status(404).json({ mensaje: "El usuario no se actualizo" });
+        res.status(404).json({ mensaje: "El usuario no se Activo" });
       }
     } catch (error) {
       res.status(400).json({ error });
@@ -123,7 +121,7 @@ const httpUsarios = {
     try {
       const usuario = await Usuarios.findByIdAndUpdate(id, { Estado: 0 }, { new: true })
       if (usuario) {
-        res.json({ mesaje: "Usuario Desactivo" });
+        res.json({ mesaje: "Usuario Desactivado" });
       } else {
         res.status(404).json({ mensaje: "El usuario no se Desactivo" });
       }
@@ -257,4 +255,4 @@ usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
   }
 };
 
-module.exports = { httpUsarios };
+export { httpUsarios };
