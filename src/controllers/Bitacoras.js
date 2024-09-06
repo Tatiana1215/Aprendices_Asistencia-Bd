@@ -3,9 +3,9 @@
 // listar bitacora por aprendiz
 //modificar
 // crear
-const Bitacoras = require("../models/Bitacoras")
-const mongoose = require('mongoose');
-
+// const Bitacoras = require("../models/Bitacoras")
+// const mongoose = require('mongoose');
+import Bitacoras from '../models/Bitacoras.js'
 const httpBitacoras = {
 
     getListar: async (req, res) => {
@@ -306,4 +306,4 @@ const httpBitacoras = {
     
 
 }
-module.exports = { httpBitacoras }
+export { httpBitacoras }

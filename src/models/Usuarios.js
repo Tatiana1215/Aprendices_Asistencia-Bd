@@ -1,4 +1,5 @@
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
+import mongoose from "mongoose"
 
 const usuarioSheman = new mongoose.Schema({
     Email: {type:String, require:true, unique:true },
@@ -10,4 +11,5 @@ const usuarioSheman = new mongoose.Schema({
     resetPasswordCodigo : {type: String } // Guarda el codigo de verificación
 })
 
-module.exports = mongoose.model("Usuario", usuarioSheman)
+// module.exports = mongoose.model("Usuario", usuarioSheman)
+export default mongoose.model('Usuario', usuarioSheman);

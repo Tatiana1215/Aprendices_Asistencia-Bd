@@ -1,5 +1,6 @@
 
-const Ficha = require("../models/Fichas")
+// const Ficha = require("../models/Fichas")
+import Ficha from "../models/Fichas.js";
 
 const fichaHelper = {
     existsCodigo: async (Codigo)=>{
@@ -20,4 +21,4 @@ const fichaHelper = {
 // const fichaHelper = {
 //   
 // };
-module.exports = {fichaHelper}
+export {fichaHelper}

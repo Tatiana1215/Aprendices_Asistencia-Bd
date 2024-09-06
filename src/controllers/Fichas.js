@@ -5,7 +5,8 @@
 //Desactivar
 
 
-const Fichas = require("../models/Fichas")
+// const Fichas = require("../models/Fichas")
+import Fichas from '../models/Fichas.js'
 // listar todo-------------------------------------------------------------------------------------------------------
 const httpFichas = {
     getListar: async (req, res) => {
@@ -77,4 +78,4 @@ const httpFichas = {
     }
 }
 
-module.exports = {httpFichas}
+export {httpFichas}

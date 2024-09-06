@@ -1,5 +1,7 @@
-const jwt = require('jsonwebtoken');
-const Usuario = require("../models/Usuarios")
+// const jwt = require('jsonwebtoken');
+import jwt from 'jsonwebtoken';
+// const Usuario = require("../models/Usuarios")
+import  Usuario from '../models/Usuarios.js'
 
 const generarJWT = (uid) => {
     return new Promise((resolve, reject) => {
@@ -63,5 +65,4 @@ const validarJWT = async (req, res, next) => {
     }
 }
 
-
-module.exports = { generarJWT, validarJWT }
+export { generarJWT, validarJWT }
