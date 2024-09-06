@@ -6,7 +6,9 @@
 // Desactivar
 // import Usuarios from '../models/Usuarios.js'; 
 import Usuarios from '../models/Usuarios.js';
-import bcryptjs from "bcrypt";
+// import bcryptjs from "bcrypt";
+import bcrypt from 'bcryptjs';
+
 // import bcryptjs from "bcrypt";
 import { generarJWT } from '../middlewares/validarJWT.js';
 import crypto from 'crypto'
@@ -32,8 +34,8 @@ const httpUsarios = {
       const { Email, Password, Nombre } = req.body;
       const usuarios = new Usuarios({ Email, Password, Nombre });
 
-      const salt = bcryptjs.genSaltSync(10);//Se utiliza para incriptar la contraseña
-      usuarios.Password = bcryptjs.hashSync(Password, salt);
+      const salt = bcrypt.genSaltSync(10);//Se utiliza para incriptar la contraseña
+      usuarios.Password = bcrypt.hashSync(Password, salt);
 
       await usuarios.save();
       // res.json({mensaje:"Usuario creado"})
@@ -59,7 +61,7 @@ const httpUsarios = {
         });
       }
       // Comparar contraseñas
-      const validPassword = bcryptjs.compareSync(Password, usuario.Password);
+      const validPassword = bcrypt.compareSync(Password, usuario.Password);
       if (!validPassword) {
         return res.status(401).json({
           mensaje: "Usuario / Password no son correctos",
@@ -237,13 +239,13 @@ usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
         return res.status(400).json({ mensaje: "El usuario no existe" });
       }
 
-      if (!bcryptjs.compareSync(oldpassword, usuario.Password)) {
+      if (!bcrypt.compareSync(oldpassword, usuario.Password)) {
         return res.status(401).json({ mensaje: "la contraseña es incorrecta" });
       }
 
       // Actualizar la contraseña del usuario
-      const salt = bcryptjs.genSaltSync(10);
-      usuario.Password = bcryptjs.hashSync(Password, salt);
+      const salt = bcrypt.genSaltSync(10);
+      usuario.Password = bcrypt.hashSync(Password, salt);
 
 
       await usuario.save();
