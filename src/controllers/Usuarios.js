@@ -11,7 +11,7 @@ import bcrypt from "bcryptjs";
 
 // import bcryptjs from "bcrypt";
 import { generarJWT } from '../middlewares/validarJWT.js';
-// import crypt from 'crypto'
+import crypt from 'crypto'
 // const bcryptjs = require('bcrypt')
 ;
 
