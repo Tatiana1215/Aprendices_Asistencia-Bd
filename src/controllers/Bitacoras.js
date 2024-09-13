@@ -357,4 +357,5 @@ const httpBitacoras = {
     
 
 }
+ 
 export { httpBitacoras }
