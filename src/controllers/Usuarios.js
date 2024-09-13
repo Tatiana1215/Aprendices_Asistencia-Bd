@@ -9,9 +9,11 @@ import Usuarios from '../models/Usuarios.js';
 import bcrypt from "bcryptjs";
 // const bcrypt = require('bcryptjs');
 
+import nodemailer from 'nodemailer';
+
 // import bcryptjs from "bcrypt";
 import { generarJWT } from '../middlewares/validarJWT.js';
-// import crypt from 'crypto'
+import crypt from 'crypto'
 // const bcryptjs = require('bcrypt')
 ;
 
@@ -172,13 +174,25 @@ usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
       usuario.resetPasswordCodigo = codigoVerificacion;
       await usuario.save();
       // Configurar el transporter para enviar correos
-      const transporter = nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
+      // const transporter = nodemailer.createTransport({
+      //   service: "Gmail",
+      //   auth: {
+      //     user: process.env.EMAIL_USER,
+      //     pass: process.env.EMAIL_PASS,
+      //   },
+      // });
+
+
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+  tls: {
+    rejectUnauthorized: false, // Evita errores SSL en desarrollo
+  }
+});
 
       //     // Enviar correo con el enlace para restablecer la contraseña
     
@@ -190,18 +204,25 @@ usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
         from: process.env.EMAIL_USER,
         subject: "Recuperación de Contraseña",
         text: `Estás recibiendo esto porque tú (o alguien más) ha solicitado restablecer la contraseña de tu cuenta.\n\n
-        Haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso:\n\n
+        Copia o escribe el codigo de verificación.:\n\n
         ${codigoVerificacion}
         Si no solicitaste esto, simplemente ignora este correo y tu contraseña no cambiará.\n`,
       };
 
-      transporter.sendMail(mailOptions, (err) => {
-        if (err) {
-          return res.status(500).json({ mensaje: "Error enviando el correo" });
-        }
-        res.json({ mensaje: "Correo enviado con éxito" });
-      });
+      // transporter.sendMail(mailOptions, (err) => {
+      //   if (err) {
+      //     return res.status(500).json({ mensaje: "Error enviando el correo" });
+      //   }
+      //   res.json({ mensaje: "Correo enviado con éxito" });
+      // });
 
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+          console.error("Error enviando el correo:", err); // Imprime detalles del error
+          return res.status(500).json({ mensaje: "Error enviando el correo", error: err.mensaje});
+        }
+        res.json({ mensaje: "Correo enviado con éxito", info });
+      });
     } catch (error) {
       // res.status(500).json({ error });
       res.status(500).json({ error: error.mensaje || "Error desconocido" });

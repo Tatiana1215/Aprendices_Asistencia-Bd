@@ -36,11 +36,9 @@ routers.post('/login',[
 
 // Ruta para solicitar recuperación de contraseña-----------------------------------------------------------------------------------------
 routers.post('/solicitar-recuperacion', [
-    // validarJWT
     check('Email','El campo email es obligatorio').notEmpty(),
     validarCampos
 ],httpUsarios.solicitarRecuperacionContrasena);
-// ruta de verificacion
 routers.post('/Verificacion',[
     check('Email','El campo email es obligatorio').notEmpty(),
     check('Codigo' , 'El campo Codigo es obligatorio').notEmpty(),
@@ -52,7 +50,6 @@ routers.post('/reset/:id', [
     check('oldpassword', 'El campo de la contraseña actual es obligatorio').notEmpty(),
     check('Password', 'El campo del password es obligatorio').notEmpty(),
     check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
-    // validarJWT
     validarCampos
 ],httpUsarios.restablecerContrasena);
 
