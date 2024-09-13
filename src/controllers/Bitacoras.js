@@ -129,6 +129,7 @@ const httpBitacoras = {
                             }
                         },
                         'nombreAprendiz': '$aprendizInfo.Nombre', // Asume que el campo del nombre es 'Nombre'
+                        'telefonoAprendiz':'aprendizInfo.Documento',
                         'telefonoAprendiz': '$aprendizInfo.Telefono',
                         'emailAprendiz': '$aprendizInfo.Email',
                         'nombreFicha': '$fichaInfo.Nombre' // Asume que el campo del nombre de la ficha es 'Nombre'
