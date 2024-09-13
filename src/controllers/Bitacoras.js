@@ -48,6 +48,7 @@ const httpBitacoras = {
                             }
                         },
                         'nombreAprendiz': '$aprendizInfo.Nombre',
+                        'documentoAprendiz':'aprendizInfo.Documento',
                         'telefonoAprendiz': '$aprendizInfo.Telefono',
                         'emailAprendiz': '$aprendizInfo.Email',
                         'nombreFicha': '$fichaInfo.Nombre'
