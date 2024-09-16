@@ -310,10 +310,8 @@ const httpBitacoras = {
     },
 
     obtenerBitacorasPorFichaYFecha: async (req, res) => {
-
+  const { fichaNumero, fecha } = req.query;
         try {
-            const { fichaNumero, fecha } = req.query;
-
             // Buscar el ObjectId de la ficha usando el número de ficha
             const ficha = await Fichas.findOne({ Codigo: fichaNumero });
             if (!ficha) {
@@ -339,16 +337,17 @@ const httpBitacoras = {
                 createdAt: { $gte: startDate, $lte: endDate },
                 aprendiz: { $in: aprendices.map(a => a._id) },
                 estado: 'asistió' // Filtrar por estado "asistió"
-            }).populate('Aprendices', 'nombre documento'); // Reemplaza 'nombre documento' con los campos que desees
+            }).populate('aprendices', 'nombre documento'); // Reemplaza 'nombre documento' con los campos que desees
 
             // Formatear la respuesta para incluir los valores deseados
             const formattedBitacoras = bitacoras.map(bitacora => ({
-                documento: bitacora.Aprendices.Documento,
-                nombre: bitacora.Aprendices.Nombre,
+                // estado: bitacora.Bitacoras.Estado,
+                documento: bitacora.aprendices.Documento,
+                nombre: bitacora.aprendices.Nombre,
                 createdAt: bitacora.createdAt,
                 // Añade otros campos que desees incluir
             }));
-            res.json(formattedBitacoras)
+            // res.json(formattedBitacoras)
             res.status(200).json(formattedBitacoras);
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -357,6 +356,66 @@ const httpBitacoras = {
 
     }
     
+    // obtenerBitacorasPorFichaYFecha: async (req, res) => {
+    //     try {
+    //         const { fichaNumero, fecha } = req.query;
+    
+    //         // Buscar el ObjectId de la ficha usando el número de ficha
+    //         const ficha = await Fichas.findOne({ Codigo: fichaNumero });
+    //         if (!ficha) {
+    //             return res.status(404).json({ message: 'Ficha no encontrada' });
+    //         }
+    
+    //         // Buscar todos los aprendices que tienen esta ficha
+    //         const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
+    //         if (aprendices.length == 0) {
+    //             return res.status(404).json({ message: 'Aprendiz no encontrado' });
+    //         }
+    
+    //         // Extraer el año, mes y día del parámetro fecha
+    //         const year = fecha.substring(0, 4);
+    //         const month = fecha.substring(5, 7);
+    //         const day = fecha.substring(8, 10);
+    
+    //         const startDate = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    //         const endDate = new Date(`${year}-${month}-${day}T23:59:59.999Z`);
+    
+    //         // Usar aggregate para buscar y hacer join con aprendices
+    //         const bitacoras = await Bitacoras.aggregate([
+    //             {
+    //                 $match: {
+    //                     createdAt: { $gte: startDate, $lte: endDate },
+    //                     aprendiz: { $in: aprendices.map(a => a._id) },
+    //                     estado: 'asistio'
+    //                 }
+    //             },
+    //             {
+    //                 $lookup: {
+    //                     from: 'aprendices', // Colección de aprendices
+    //                     localField: 'aprendiz',
+    //                     foreignField: '_id',
+    //                     as: 'aprendices'
+    //                 }
+    //             },
+    //             {
+    //                 $unwind: '$aprendices'
+    //             },
+    //             {
+    //                 $project: {
+    //                     Estado:1,
+    //                     documento: '$aprendices.Documento',
+    //                     nombre: '$aprendices.Nombre',
+    //                     createdAt: 1
+    //                 }
+    //             }
+    //         ]);
+    
+    //         // Devolver el resultado formateado
+    //         res.status(200).json(bitacoras);
+    //     } catch (error) {
+    //         res.status(500).json({ message: error.message });
+    //     }
+    // }
 
 }
  
