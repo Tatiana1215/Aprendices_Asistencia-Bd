@@ -2,7 +2,7 @@
 import { check } from "express-validator";
 import { validarCampos } from "../middlewares/validar-campos.js";
 import {validarJWT} from '../middlewares/validarJWT.js'
-import {httpAprendiz} from '../controllers/Aprendices.js'
+import {httpAprendiz, uploadFirma} from '../controllers/Aprendices.js'
 import { aprendizHelper } from "../helpers/Aprendices.js";
 import { Router } from "express";
 
@@ -37,6 +37,7 @@ routers.get("/listarPorFicha/:Id_Ficha", [
 
 // -------------------------------------------------------------------------------------------------------------------------
 routers.post("/Insertar", [
+    uploadFirma,
     validarJWT,
     check('Documento', 'El campo documento es obligatorio').notEmpty(),
     check('Documento').custom(aprendizHelper.existeDocumento),
@@ -51,8 +52,11 @@ routers.post("/Insertar", [
     check('Id_Ficha', 'El campo Id_Fecha es obligatorio').notEmpty(),
     validarCampos,
     // validarJWT
-], httpAprendiz.postAprediz)
+], httpAprendiz.postAprediz, )
 
+routers.post('/firma',
+    uploadFirma
+)
 // ------------------------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id", [
     check('id', 'El id no es valido').isMongoId(),

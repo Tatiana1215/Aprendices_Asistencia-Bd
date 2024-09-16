@@ -9,6 +9,7 @@ import Aprendices from '../models/Aprendices.js'
 import Fichas from '../models/Fichas.js'
 import Bitacoras from '../models/Bitacoras.js'
 
+
 const httpBitacoras = {
 
     getListar: async (req, res) => {
@@ -234,9 +235,9 @@ const httpBitacoras = {
             const aprendiz = await Aprendices.findOne({ Documento })
             
             // Verificar si el aprendiz existe
-            // if (!aprendiz) {
-            //     return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese numero de documento' })
-            // }
+            if (!aprendiz) {
+                return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese numero  documento' })
+            }
 
             // Crear la bitácora con el Id del aprendiz
             const bitacora = new Bitacoras({ Id_Aprendiz: aprendiz.id })
@@ -253,10 +254,10 @@ const httpBitacoras = {
         try {
 
             const bitacora = await Bitacoras.findById(id)
-            const { Id_Aprendiz, FechaHora } = req.body
+            const { Id_Aprendiz} = req.body
             if (bitacora) {
                 bitacora.Id_Aprendiz = Id_Aprendiz
-                bitacora.FechaHora = FechaHora
+                // bitacora.FechaHora = FechaHora
                 await bitacora.save()
                 res.json({ mensaje: "Datos Actualizados correctamente" })
             } else {

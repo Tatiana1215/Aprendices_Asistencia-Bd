@@ -16,7 +16,22 @@
 
 // const Aprendiz = require('../models/Aprendices')
 import Aprendiz from '../models/Aprendices.js'
+import multer from 'multer'
 
+
+
+const storage= multer.diskStorage({
+    destination: function(req,file,cb){
+        cb(null, 'uploads')
+    },
+        filename: function(req, file, cb){
+            cb(null, `${Date.now()}- ${file.originalname}`
+        )
+        }
+})
+
+
+const upload = multer({storage: storage})
 const httpAprendiz ={
  //listar todos los aprendices-------------------------------------------------------------------------------
 getAprendicesListarTodo: async (req, res)=>{
@@ -60,11 +75,19 @@ getAprendizListarId: async (req, res)=>{
         res.status(400).json({error})
     }
 },
+
+// --------------------------------------
+
+
+
 // insertar--------------------------------------------------------------------------------------------------------------
 postAprediz: async (req, res) =>{
-    const {Documento, Nombre,Telefono,Email,Id_Ficha} = req.body
+    const {Documento, Nombre,Telefono,Email,Id_Ficha } = req.body
 try {
-    const nuevoAprediz= new Aprendiz({Documento, Nombre, Telefono,Email, Id_Ficha});
+    const firma = req.file ? req.file.path : null; // Ruta del archivo cargado
+    console.log('Archivo recibido:', req.file); // Verifica que el archivo está siendo recibido
+    console.log('Ruta del archivo:', firma);
+    const nuevoAprediz= new Aprendiz({Documento, Nombre, Telefono,Email, Id_Ficha, firma});
     await nuevoAprediz.save();
     res.json(nuevoAprediz)
 } catch (error) {
@@ -120,4 +143,7 @@ putAprendizDesactivar: async (req, res)=>{
 }
 }
 
-export {httpAprendiz}
+
+const uploadFirma = upload.single('firma');
+
+export {httpAprendiz, uploadFirma}
