@@ -235,7 +235,7 @@ const httpBitacoras = {
             
             // Verificar si el aprendiz existe
             if (!aprendiz) {
-                return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese documento' })
+                return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese numero de documento documento' })
             }
 
             // Crear la bitácora con el Id del aprendiz
