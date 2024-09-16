@@ -41,15 +41,15 @@ routers.post("/Insertar", [
     validarJWT,
     check('Documento', 'El campo documento es obligatorio').notEmpty(),
     check('Documento').custom(aprendizHelper.existeDocumento),
-    check('Documento', 'El numero de documento debe se maximo de 10 caracteres ').isLength({ min: 10 }),
+    check('Documento', 'El numero de documento debe se maximo de 10 caracteres ').isLength({ max: 10 }),
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
     check('Nombre', 'El Nombre debe tener maximo 20 caracteres').isLength({max:20}),
     check('Telefono', 'El campo telefono es obligatorio').notEmpty(),
-    check('Telefono', 'El numero de telefono debe tener 10 digitos').isLength({ min: 10 }),
+    check('Telefono', 'El numero de telefono debe tener 10 digitos').isLength({ max: 10 }),
     check('Email', 'El campo email es obligatorio').notEmpty(),
     check('Email').custom(aprendizHelper.existeEmail),
     // check('Email','El email no es correcto').isEmail(),
-    
+
     check('Id_Ficha', 'El campo Id_Fecha es obligatorio').notEmpty(),
     validarCampos,
     // validarJWT
