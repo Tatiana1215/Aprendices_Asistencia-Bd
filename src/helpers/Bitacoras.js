@@ -1,16 +1,17 @@
 // const Bitacora = require("../models/Bitacoras")
 import Bitacora from "../models/Bitacoras.js"
+import Aprendices from "../models/Aprendices.js"
 
 const bitacoraHelper = {
-    existeIdAprendiz: async (Id_Aprendiz)=>{
-    const exists = await Bitacora.find({Id_Aprendiz})
+    existeDocAprendiz: async (Documento)=>{
+    const exists = await Aprendices.findOne({Documento})
     if(!exists){
-        throw new Error("EL ID del aprendiz no existe")
+        throw new Error("EL Documento del aprendiz no existe")
     }
 },
 
-unicoIdAprendiz: async (Id_Aprendiz)=>{
-    const unico = await Bitacora.find({Id_Aprendiz: Id_Aprendiz})
+unicoDocAprendiz: async (Documento)=>{
+    const unico = await Aprendices.findOne({Documento})
     if (unico.length > 0) {
         throw new Error("El id del aprendiz ya existe");
     }
