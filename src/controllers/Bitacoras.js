@@ -348,7 +348,7 @@ const httpBitacoras = {
                 createdAt: bitacora.createdAt,
                 // Añade otros campos que desees incluir
             }));
-
+            res.json(formattedBitacoras)
             res.status(200).json(formattedBitacoras);
         } catch (error) {
             res.status(500).json({ message: error.message });
