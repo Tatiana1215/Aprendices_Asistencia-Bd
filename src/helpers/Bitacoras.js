@@ -4,7 +4,7 @@ import Aprendices from "../models/Aprendices.js"
 
 const bitacoraHelper = {
     existeDocAprendiz: async (Documento)=>{
-    const exists = await Aprendices.find({Documento})
+    const exists = await Aprendices.find({Documento:Documento})
 
     if(!exists){
         throw new Error("EL Documento del aprendiz no existe")

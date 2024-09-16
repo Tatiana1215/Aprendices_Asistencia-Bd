@@ -234,9 +234,9 @@ const httpBitacoras = {
             const aprendiz = await Aprendices.findOne({ Documento })
             
             // Verificar si el aprendiz existe
-            if (!aprendiz) {
-                return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese numero de documento documento' })
-            }
+            // if (!aprendiz) {
+            //     return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese numero de documento' })
+            // }
 
             // Crear la bitácora con el Id del aprendiz
             const bitacora = new Bitacoras({ Id_Aprendiz: aprendiz.id })
