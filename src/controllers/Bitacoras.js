@@ -39,7 +39,7 @@ const httpBitacoras = {
                 {
                     $project: {
                         _id: 1,
-                        Estado:1,
+                        Estado: 1,
                         createdAt: {
                             $dateToString: {
                                 format: "%d/%m/%Y %H:%M:%S",
@@ -48,7 +48,7 @@ const httpBitacoras = {
                             }
                         },
                         'nombreAprendiz': '$aprendizInfo.Nombre',
-                        'documentoAprendiz':'$aprendizInfo.Documento',
+                        'documentoAprendiz': '$aprendizInfo.Documento',
                         'telefonoAprendiz': '$aprendizInfo.Telefono',
                         'emailAprendiz': '$aprendizInfo.Email',
                         'nombreFicha': '$fichaInfo.Nombre'
@@ -91,8 +91,10 @@ const httpBitacoras = {
             const bitacoras = await Bitacoras.aggregate([
                 {
                     $match: {
-                        createdAt: {    $gte: fechaInicial,
-                            $lte: fechaFinal }
+                        createdAt: {
+                            $gte: fechaInicial,
+                            $lte: fechaFinal
+                        }
                     }
                 },
                 {
@@ -121,7 +123,7 @@ const httpBitacoras = {
                     $project: {
                         _id: 1,
                         // FechaHora:1,
-                        Estado:1,
+                        Estado: 1,
                         createdAt: {
                             $dateToString: {
                                 format: "%d/%m/%Y %H:%M:%S",
@@ -130,7 +132,7 @@ const httpBitacoras = {
                             }
                         },
                         'nombreAprendiz': '$aprendizInfo.Nombre', // Asume que el campo del nombre es 'Nombre'
-                        'documentoAprendiz':'$aprendizInfo.Documento',
+                        'documentoAprendiz': '$aprendizInfo.Documento',
                         'telefonoAprendiz': '$aprendizInfo.Telefono',
                         'emailAprendiz': '$aprendizInfo.Email',
                         'nombreFicha': '$fichaInfo.Nombre' // Asume que el campo del nombre de la ficha es 'Nombre'
@@ -182,7 +184,7 @@ const httpBitacoras = {
                 {
                     $project: {
                         _id: 1,
-                        Estado:1,
+                        Estado: 1,
                         Id_Aprendiz: 1,
                         createdAt: {
                             $dateToString: {
@@ -226,14 +228,25 @@ const httpBitacoras = {
     // Insertar bitacora----------------------------------------------------------------------------------------------------------------
     postInsertaBitacora: async (req, res) => {
         try {
-            const { Id_Aprendiz } = req.body
-            const bitacora = new Bitacoras({ Id_Aprendiz })
+            const { Documento } = req.body
+
+              // Buscar al aprendiz por el número de documento
+            const aprendiz = await Aprendices.findOne({ Documento })
+            
+            // Verificar si el aprendiz existe
+            if (!aprendiz) {
+                return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese documento' })
+            }
+
+            // Crear la bitácora con el Id del aprendiz
+            const bitacora = new Bitacoras({ Id_Aprendiz: aprendiz.id })
             const resultado = await bitacora.save()
             res.json({ mensaje: "Se inserto los datos correctamente", resultado })
         } catch (error) {
             res.status(400).json({ error })
         }
     },
+
     // Modificar Bitacora------------------------------------------------------------------------------------------------------------------
     putModificarBitacora: async (req, res) => {
         const { id } = req.params
@@ -254,53 +267,32 @@ const httpBitacoras = {
         }
     },
     // Actualizar Estado----------------------------------------------------------------------------------------------------------------
-    // putActualizarEstado: async (req, res) => {
-    //     const { id } = req.params
-    //     const { Estado } = req.body
-    //     try {
 
-    //         // const validEstados = ['Asistio', 'No Asistio', 'Excusa', 'Pendiente'];
-    //         // if (!validEstados.includes(Estado)) {
-    //         //     return res.status(400).json({ msg: "Estado no válido" });
-    //         // }
-
-    //         const bitacora = await Bitacoras.findByIdAndUpdate(id, { Estado }, { new: true })
-
-    //         if (!bitacora) {
-    //             res.status(404).json({ msg: 'Bitacora no encontrada' })
-    //         }
-    //         await bitacora.save()
-    //         res.json(bitacora)
-    //     } catch (error) {
-    //         console.log('error al actualizar estado', error)
-    //         res.status(500).json({ error: 'Error al actualizar estado' })
-    //     }
-    // }
     putActualizarEstado: async (req, res) => {
         const { id } = req.params;
         const { Estado } = req.body;
-    
+
         try {
             const validEstados = ['Asistio', 'No Asistio', 'Excusa', 'Pendiente'];
             console.log("Estado recibido en el servidor:", Estado);
-    
+
             // Verificar si el estado es válido
             if (!validEstados.includes(Estado)) {
                 console.log("Estado no válido:", Estado);
                 return res.status(400).json({ msg: "Estado no válido" });
             }
-    
+
             // Buscar la bitácora por ID y actualizar el estado
             const bitacora = await Bitacoras.findByIdAndUpdate(id, { Estado }, { new: true });
-    
+
             // Verificar si se encontró la bitácora
             if (!bitacora) {
                 return res.status(404).json({ msg: 'Bitacora no encontrada' });
             }
-    
+
             // Guardar la bitácora actualizada
             await bitacora.save();
-    
+
             // Enviar la respuesta con la bitácora actualizada
             res.json(bitacora);
         } catch (error) {
@@ -310,7 +302,7 @@ const httpBitacoras = {
     },
 
     obtenerBitacorasPorFichaYFecha: async (req, res) => {
-  const { fichaNumero, fecha } = req.query;
+        const { fichaNumero, fecha } = req.query;
         try {
             // Buscar el ObjectId de la ficha usando el número de ficha
             const ficha = await Fichas.findOne({ Codigo: fichaNumero });
@@ -355,68 +347,6 @@ const httpBitacoras = {
 
 
     }
-    
-    // obtenerBitacorasPorFichaYFecha: async (req, res) => {
-    //     try {
-    //         const { fichaNumero, fecha } = req.query;
-    
-    //         // Buscar el ObjectId de la ficha usando el número de ficha
-    //         const ficha = await Fichas.findOne({ Codigo: fichaNumero });
-    //         if (!ficha) {
-    //             return res.status(404).json({ message: 'Ficha no encontrada' });
-    //         }
-    
-    //         // Buscar todos los aprendices que tienen esta ficha
-    //         const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
-    //         if (aprendices.length == 0) {
-    //             return res.status(404).json({ message: 'Aprendiz no encontrado' });
-    //         }
-    
-    //         // Extraer el año, mes y día del parámetro fecha
-    //         const year = fecha.substring(0, 4);
-    //         const month = fecha.substring(5, 7);
-    //         const day = fecha.substring(8, 10);
-    
-    //         const startDate = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    //         const endDate = new Date(`${year}-${month}-${day}T23:59:59.999Z`);
-    
-    //         // Usar aggregate para buscar y hacer join con aprendices
-    //         const bitacoras = await Bitacoras.aggregate([
-    //             {
-    //                 $match: {
-    //                     createdAt: { $gte: startDate, $lte: endDate },
-    //                     aprendiz: { $in: aprendices.map(a => a._id) },
-    //                     estado: 'asistio'
-    //                 }
-    //             },
-    //             {
-    //                 $lookup: {
-    //                     from: 'aprendices', // Colección de aprendices
-    //                     localField: 'aprendiz',
-    //                     foreignField: '_id',
-    //                     as: 'aprendices'
-    //                 }
-    //             },
-    //             {
-    //                 $unwind: '$aprendices'
-    //             },
-    //             {
-    //                 $project: {
-    //                     Estado:1,
-    //                     documento: '$aprendices.Documento',
-    //                     nombre: '$aprendices.Nombre',
-    //                     createdAt: 1
-    //                 }
-    //             }
-    //         ]);
-    
-    //         // Devolver el resultado formateado
-    //         res.status(200).json(bitacoras);
-    //     } catch (error) {
-    //         res.status(500).json({ message: error.message });
-    //     }
-    // }
-
 }
- 
+
 export { httpBitacoras }
