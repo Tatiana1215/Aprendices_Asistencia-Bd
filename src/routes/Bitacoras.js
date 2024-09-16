@@ -5,13 +5,6 @@ import {httpBitacoras} from '../controllers/Bitacoras.js'
 import { bitacoraHelper } from "../helpers/Bitacoras.js";
 import { Router } from "express";
 
-
-// const { check } = require("express-validator");
-// const { validarCampos } = require("../middlewares/validar-campos");
-// const { validarJWT, generarJWT } = require("../middlewares/validarJWT");
-// const { httpBitacoras } = require("../controllers/Bitacoras");
-// const { Router } = require("express");
-// const { bitacoraHelper } = require("../helpers/Bitacoras");
 const routers = Router()
 routers.get("/listar",[
     validarJWT
@@ -21,6 +14,11 @@ routers.get("/listar",[
 routers.get("/ListarBitacoras",[
 // validarJWT
 ],httpBitacoras.getListarTodo)
+// -----------------------------------------------------------------------------------------------------
+
+
+routers.get("/listaFechaFicha",[
+],httpBitacoras.obtenerBitacorasPorFichaYFecha)
 
 // -----------------------------------------------------------------------------------------------------
 routers.get("/ListaPorFicha/:Id_Ficha",[

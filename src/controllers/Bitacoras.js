@@ -315,14 +315,14 @@ const httpBitacoras = {
             const { fichaNumero, fecha } = req.query;
 
             // Buscar el ObjectId de la ficha usando el número de ficha
-            const ficha = await Fichas.findOne({ numero: fichaNumero });
+            const ficha = await Fichas.findOne({ Codigo: fichaNumero });
             if (!ficha) {
                 return res.status(404).json({ message: 'Ficha no encontrada' });
             }
 
             // Buscar todos los aprendices que tienen esta ficha
-            const aprendices = await Aprendices.find({ fichas: ficha._id });
-            if (aprendices.length === 0) {
+            const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
+            if (aprendices.length == 0) {
                 return res.status(404).json({ message: 'Aprendiz no encontrado' });
             }
 
@@ -335,16 +335,16 @@ const httpBitacoras = {
             const endDate = new Date(`${year}-${month}-${day}T23:59:59.999Z`);
 
             // Buscar bitácoras para los aprendices que asistieron en la fecha especificada
-            const bitacoras = await Bitacora.find({
+            const bitacoras = await Bitacoras.find({
                 createdAt: { $gte: startDate, $lte: endDate },
                 aprendiz: { $in: aprendices.map(a => a._id) },
                 estado: 'asistió' // Filtrar por estado "asistió"
-            }).populate('aprendiz', 'nombre documento'); // Reemplaza 'nombre documento' con los campos que desees
+            }).populate('Aprendices', 'nombre documento'); // Reemplaza 'nombre documento' con los campos que desees
 
             // Formatear la respuesta para incluir los valores deseados
             const formattedBitacoras = bitacoras.map(bitacora => ({
-                documento: bitacora.aprendiz.documento,
-                nombre: bitacora.aprendiz.nombre,
+                documento: bitacora.Aprendices.Documento,
+                nombre: bitacora.Aprendices.Nombre,
                 createdAt: bitacora.createdAt,
                 // Añade otros campos que desees incluir
             }));

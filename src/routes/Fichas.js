@@ -4,6 +4,7 @@ import {validarJWT} from "../middlewares/validarJWT.js"
 import {httpFichas} from "../controllers/Fichas.js"
 import { fichaHelper } from "../helpers/Fichas.js"
 import { Router } from "express"
+import { httpBitacoras } from "../controllers/Bitacoras.js"
 
 // const { Router } = require("express")
 // const { check } = require("express-validator")
