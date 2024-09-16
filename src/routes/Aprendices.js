@@ -49,10 +49,13 @@ routers.post("/Insertar", [
     check('Email', 'El campo email es obligatorio').notEmpty(),
     check('Email').custom(aprendizHelper.existeEmail),
     // check('Email','El email no es correcto').isEmail(),
+    
     check('Id_Ficha', 'El campo Id_Fecha es obligatorio').notEmpty(),
     validarCampos,
     // validarJWT
 ], httpAprendiz.postAprediz, )
+
+
 
 routers.post('/firma',
     uploadFirma
