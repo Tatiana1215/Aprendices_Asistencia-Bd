@@ -301,7 +301,7 @@ const httpBitacoras = {
             res.status(500).json({ error: 'Error al actualizar estado' });
         }
     },
-
+    
     obtenerBitacorasPorFichaYFecha: async (req, res) => {
         const { fichaNumero, fecha } = req.query;
         try {
@@ -310,44 +310,53 @@ const httpBitacoras = {
             if (!ficha) {
                 return res.status(404).json({ message: 'Ficha no encontrada' });
             }
-
+            console.log(ficha);
+                
             // Buscar todos los aprendices que tienen esta ficha
             const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
-            if (aprendices.length == 0) {
-                return res.status(404).json({ message: 'Aprendiz no encontrado' });
+            if(!aprendices){
+                console.log('no hay nada')
             }
+            console.log(aprendices); // Verificar los aprendices encontrados
 
+            if (aprendices.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron aprendices para esta ficha' });
+            }
+    
             // Extraer el año, mes y día del parámetro fecha
             const year = fecha.substring(0, 4);
             const month = fecha.substring(5, 7);
             const day = fecha.substring(8, 10);
-
+    
             const startDate = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
             const endDate = new Date(`${year}-${month}-${day}T23:59:59.999Z`);
-
+    
             // Buscar bitácoras para los aprendices que asistieron en la fecha especificada
             const bitacoras = await Bitacoras.find({
                 createdAt: { $gte: startDate, $lte: endDate },
-                aprendiz: { $in: aprendices.map(a => a._id) },
-                estado: 'asistió' // Filtrar por estado "asistió"
-            }).populate('aprendices', 'nombre documento'); // Reemplaza 'nombre documento' con los campos que desees
-
+                Id_Aprendiz: { $in: aprendices.map(a => a._id) },  // Asegúrate de que sea Id_Aprendiz
+                Estado: 'Asistio' // Filtro por estado exacto definido en el enum
+            }).populate('Id_Aprendiz', 'Nombre Documento');  // Popula los datos del aprendiz
+    
+            // Si no hay bitácoras, responde con un mensaje adecuado
+            if (bitacoras.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron bitácoras para los aprendices en esta fecha con el estado "Asistió"' });
+            }
+    
             // Formatear la respuesta para incluir los valores deseados
             const formattedBitacoras = bitacoras.map(bitacora => ({
-                // estado: bitacora.Bitacoras.Estado,
-                documento: bitacora.aprendices.Documento,
-                nombre: bitacora.aprendices.Nombre,
+                documento: bitacora.Id_Aprendiz.Documento,
+                nombre: bitacora.Id_Aprendiz.Nombre,
+                
                 createdAt: bitacora.createdAt,
-                // Añade otros campos que desees incluir
             }));
-            // res.json(formattedBitacoras)
+    
             res.status(200).json(formattedBitacoras);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-
-
     }
+
 }
 
 export { httpBitacoras }

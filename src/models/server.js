@@ -50,6 +50,8 @@ class Server {
             console.log(`Servidor escuchando en el puerto:${process.env.PORT}`);
             mongoose.connect('mongodb+srv://jeniffermendez07:1005450911@proyectofinal.iaz9f.mongodb.net/?retryWrites=true&w=majority&appName=proyectoFinal')
                 .then(() => console.log('Connected!'))
+                // mongoose.connect('mongodb://127.0.0.1:27017/Asistencia')
+                //     .then(() => console.log('Connected!'))
         })
     }
 }

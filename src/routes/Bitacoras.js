@@ -40,7 +40,7 @@ routers.post("/Insertar",[
     // check('Id_Aprendiz','El id aprendiz no es valido').isMongoId(),
     check('Documento', 'El campo del Documento es obligatorio').notEmpty(),
     check("Documento").custom(bitacoraHelper.existeDocAprendiz),
-    check("Documento").custom(bitacoraHelper.unicoDocAprendiz),
+    // check("Documento").custom(bitacoraHelper.unicoDocAprendiz),
     validarCampos,
 ],httpBitacoras.postInsertaBitacora)
 
