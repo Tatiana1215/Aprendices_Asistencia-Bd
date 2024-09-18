@@ -84,11 +84,11 @@ getAprendizListarId: async (req, res)=>{
 postAprediz: async (req, res) =>{
     const {Documento, Nombre,Telefono,Email,Id_Ficha } = req.body
 try {
-    // const firma = req.file ? req.file.path : null; // Ruta del archivo cargado
-    // console.log('Archivo recibido:', req.file); // Verifica que el archivo está siendo recibido
-    // console.log('Ruta del archivo:', firma);
+    const firma = req.file ? req.file.path : null; // Ruta del archivo cargado
+    console.log('Archivo recibido:', req.file); // Verifica que el archivo está siendo recibido
+    console.log('Ruta del archivo:', firma);
     
-    const nuevoAprediz= new Aprendiz({Documento, Nombre, Telefono,Email, Id_Ficha});
+    const nuevoAprediz= new Aprendiz({Documento, Nombre, Telefono,Email, Id_Ficha, firma});
     await nuevoAprediz.save();
     res.json(nuevoAprediz)
 } catch (error) {

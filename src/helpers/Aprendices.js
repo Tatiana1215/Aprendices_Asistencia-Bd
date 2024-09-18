@@ -19,6 +19,13 @@ const aprendizHelper = {
         if(documento && documento._id.toString() !== id){
             throw new Error(`El numero de documeto ${Documento} ya existe`)
         }
+    },
+    numTelefono: async (Telefono) => {
+        const unico = await Aprendiz.findOne({Telefono})
+
+        if(unico){
+            throw new Error("El Numero de telefono ya existe")
+        }
     }
 
 }

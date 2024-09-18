@@ -47,6 +47,7 @@ routers.post("/Insertar", [
     check('Nombre', 'El Nombre debe tener maximo 20 caracteres').isLength({max:20}),
     check('Documento', 'El numero de documento debe se maximo de 10 caracteres ').isLength({ max: 10 }),
     check('Telefono', 'El numero de telefono debe tener 10 digitos').isLength({ max: 10 }),
+    check('Telefono').custom(aprendizHelper.numTelefono),
     check('Email').custom(aprendizHelper.existeEmail),
     // check('Email','El email no es correcto').isEmail(),
     check('Id_Ficha', 'El campo Id_Fecha es obligatorio').notEmpty(),
