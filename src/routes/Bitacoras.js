@@ -18,7 +18,7 @@ routers.get("/ListarBitacoras",[
 
 
 routers.get("/listaFechaFicha",[
-    check('Codigo', 'El campo codigo se requiere').notEmpty(),
+    // check('Codigo', 'El campo codigo se requiere').notEmpty(),
     validarCampos
 ],httpBitacoras.obtenerBitacorasPorFichaYFecha)
 
