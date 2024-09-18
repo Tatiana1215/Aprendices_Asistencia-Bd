@@ -303,7 +303,7 @@ const httpBitacoras = {
     },
     
     obtenerBitacorasPorFichaYFecha: async (req, res) => {
-        const { fichaNumero, fecha } = req.query;
+        const { fichaNumero, fecha } = req.body;
         try {
             // Buscar el ObjectId de la ficha usando el número de ficha
             const ficha = await Fichas.findOne({ Codigo: fichaNumero });
