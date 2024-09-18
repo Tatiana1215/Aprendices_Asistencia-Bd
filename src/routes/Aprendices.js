@@ -5,6 +5,13 @@ import {validarJWT} from '../middlewares/validarJWT.js'
 import {httpAprendiz, uploadFirma} from '../controllers/Aprendices.js'
 import { aprendizHelper } from "../helpers/Aprendices.js";
 import { Router } from "express";
+import express from 'express';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // const { check } = require("express-validator");
 // const { validarCampos } = require("../middlewares/validar-campos");
@@ -15,8 +22,9 @@ import { Router } from "express";
 
 const routers = Router()
 
+const upload = multer({ dest: 'uploads/' });
 //--------------------------------------------------------------------------------------------------------------------------
-routers.get("/listarTodo", [
+routers.get("/listarTodo",express.static(path.join(__dirname, 'uploads')), [
     validarJWT
 ], httpAprendiz.getAprendicesListarTodo)
 
@@ -36,7 +44,7 @@ routers.get("/listarPorFicha/:Id_Ficha", [
 ], httpAprendiz.getAprendizListarFicha)
 
 // -------------------------------------------------------------------------------------------------------------------------
-routers.post("/Insertar", [
+routers.post("/Insertar",upload.single('firma'), [
     uploadFirma,
     validarJWT,
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
