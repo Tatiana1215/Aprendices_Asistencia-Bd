@@ -306,7 +306,7 @@ const httpBitacoras = {
         const { fichaNumero, fecha } = req.query;
         try {
             // Buscar el ObjectId de la ficha usando el número de ficha
-            const ficha = await Fichas.findOne({ id: fichaNumero.id });
+            const ficha = await Fichas.findOne({ Codigo: fichaNumero });
             if (!ficha) {
                 return res.status(404).json({ message: 'Ficha no encontrada' });
             }
