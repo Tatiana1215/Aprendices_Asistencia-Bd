@@ -46,7 +46,7 @@ routers.get("/listarPorFicha/:Id_Ficha", [
 // -------------------------------------------------------------------------------------------------------------------------
 routers.post("/Insertar",upload.single('firma'), [
     uploadFirma,
-    validarJWT,
+    // validarJWT,
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
     check('Documento', 'El campo documento es obligatorio').notEmpty(),
     check('Telefono', 'El campo telefono es obligatorio').notEmpty(),
