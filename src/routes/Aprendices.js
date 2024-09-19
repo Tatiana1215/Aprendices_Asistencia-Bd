@@ -44,7 +44,7 @@ routers.get("/listarPorFicha/:Id_Ficha", [
 
 // -------------------------------------------------------------------------------------------------------------------------
 routers.post("/Insertar", [
-   
+   upload.single('file'),      // `upload.single('file')` procesa el archivo con nombre 'file' en la solicitud
     // validarJWT,
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
     check('Documento', 'El campo documento es obligatorio').notEmpty(),
@@ -60,8 +60,8 @@ routers.post("/Insertar", [
     check('Id_Ficha', 'El campo Id_Fecha es obligatorio').notEmpty(),
     validarCampos,
     // validarJWT
-      // `upload.single('file')` procesa el archivo con nombre 'file' en la solicitud
-], upload.single('file'),httpAprendiz.postAprediz, )
+
+], httpAprendiz.postAprediz, )
 
 
 // ------------------------------------------------------------------------------------------------------------------------
