@@ -89,7 +89,6 @@ const httpAprendiz = {
                 fetch_format: 'auto',
                 quality: 'auto',
             });
-
             const nuevoAprediz = new Aprendiz({
                 Documento,
                 Nombre,
