@@ -22,6 +22,10 @@ routers.get("/listaFechaFicha",[
     validarCampos
 ],httpBitacoras.obtenerBitacorasPorFichaYFecha)
 
+
+routers.get("/listaFechasFicha",[
+],httpBitacoras.getListarBitacorasPorFichaYFechas)
+
 // -----------------------------------------------------------------------------------------------------
 routers.get("/ListaPorFicha/:Id_Ficha",[
 check('Id_Ficha', 'El id no es valido').isMongoId(),
