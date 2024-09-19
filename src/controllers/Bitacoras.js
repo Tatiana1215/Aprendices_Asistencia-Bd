@@ -70,14 +70,27 @@ const httpBitacoras = {
         }
     },
 
-    //   listar toda-----------------------------------------------------------------------------------------------------
+     //   listar toda-----------------------------------------------------------------------------------------------------
     getListarTodo: async (req, res) => {
+        const { fichaNumero, FechaInicial, FechaFinal } = req.query;
+    
         try {
-            const { FechaInicial, FechaFinal, Id_Ficha } = req.query;
+            // Buscar el ObjectId de la ficha usando el número de ficha
+            const ficha = await Fichas.findOne({ Codigo: fichaNumero });
+            if (!ficha) {
+                return res.status(404).json({ message: 'Ficha no encontrada' });
+            }
+    
+            // Buscar todos los aprendices que tienen esta ficha
+            const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
+    
+            if (aprendices.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron aprendices para esta ficha' });
+            }
     
             // Validar que las fechas estén proporcionadas
             if (!FechaInicial || !FechaFinal) {
-                return res.status(400).json({ mensaje: "Fechas no proporcionadas" });
+                return res.status(400).json({ message: "Fechas no proporcionadas" });
             }
     
             // Convertir las fechas a objetos Date
@@ -86,78 +99,34 @@ const httpBitacoras = {
     
             // Validar que las fechas sean válidas
             if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
-                return res.status(400).json({ mensaje: "Formato de fecha no válido" });
+                return res.status(400).json({ message: "Formato de fecha no válido" });
             }
     
-            // Construir el filtro de búsqueda
-            let filtro = {
-                createdAt: {
-                    $gte: fechaInicial,
-                    $lte: fechaFinal
-                }
-            };
+            // Buscar bitácoras para los aprendices entre las fechas especificadas
+            const bitacoras = await Bitacoras.find({
+                createdAt: { $gte: fechaInicial, $lte: fechaFinal },
+                Id_Aprendiz: { $in: aprendices.map(a => a._id) },
+                Estado: 'Asistio'
+            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');  // Popula los datos del aprendiz
     
-            // Verificar si Id_Ficha es proporcionado y válido
-            if (Id_Ficha && mongoose.Types.ObjectId.isValid(Id_Ficha)) {
-                filtro['Aprendiz.Id_Ficha'] = new mongoose.Types.ObjectId(Id_Ficha);
+            // Si no hay bitácoras, responde con un mensaje adecuado
+            if (bitacoras.length === 0) {
+                return res.status(404).json({ message: 'No se encontraron bitácoras para los aprendices en el rango de fechas con el estado "Asistió"' });
             }
     
-            // Realizar la agregación
-            const bitacoras = await Bitacoras.aggregate([
-                {
-                    $lookup: {
-                        from: 'aprendizs',
-                        localField: 'Id_Aprendiz',
-                        foreignField: '_id',
-                        as: 'aprendizInfo'
-                    }
-                },
-                {
-                    $unwind: '$aprendizInfo'
-                },
-                {
-                    $match: filtro
-                },
-                {
-                    $lookup: {
-                        from: 'fichas',
-                        localField: 'aprendizInfo.Id_Ficha',
-                        foreignField: '_id',
-                        as: 'fichaInfo'
-                    }
-                },
-                {
-                    $unwind: '$fichaInfo'
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        Estado: 1,
-                        createdAt: {
-                            $dateToString: {
-                                format: "%d/%m/%Y %H:%M:%S",
-                                date: "$createdAt",
-                                timezone: "America/Bogota"
-                            }
-                        },
-                        'nombreAprendiz': '$aprendizInfo.Nombre',
-                        'documentoAprendiz': '$aprendizInfo.Documento',
-                        'telefonoAprendiz': '$aprendizInfo.Telefono',
-                        'emailAprendiz': '$aprendizInfo.Email',
-                        'nombreFicha': '$fichaInfo.Nombre'
-                    }
-                }
-            ]);
+            // Formatear la respuesta para incluir los valores deseados
+            const formattedBitacoras = bitacoras.map(bitacora => ({
+                documento: bitacora.Id_Aprendiz.Documento,
+                nombre: bitacora.Id_Aprendiz.Nombre,
+                emailAprendiz: bitacora.Id_Aprendiz.Email,
+                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
+                fechaAsistencia: bitacora.createdAt
+            }));
     
-            // Responder con los resultados de la búsqueda
-            if (bitacoras.length > 0) {
-                res.json(bitacoras);
-            } else {
-                res.json({ mensaje: "No hay bitácoras en el rango de fechas proporcionado" });
-            }
+            res.status(200).json(formattedBitacoras);
         } catch (error) {
-            console.error("Error en getListarBitacoras:", error);
-            res.status(500).json({ error: error.message });
+            console.error("Error en getListarBitacorasPorFichaYFechas:", error);
+            res.status(500).json({ message: error.message });
         }
     },
     
@@ -220,7 +189,7 @@ const httpBitacoras = {
             res.status(500).json({ error: error.message });
         }
     },
-    
+
     getListarBitacorasPorFichaYFechas: async (req, res) => {
         const { Id_Ficha, FechaInicial, FechaFinal } = req.query;
         
