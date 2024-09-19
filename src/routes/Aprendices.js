@@ -6,20 +6,20 @@ import {httpAprendiz} from '../controllers/Aprendices.js'
 import { aprendizHelper } from "../helpers/Aprendices.js";
 import { Router } from "express";
 import express from 'express';
-// import multer from 'multer';
+import multer from 'multer';
 const routers = Router()
 
 // Configuración de Multer para almacenar archivos temporalmente
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//       cb(null, 'uploads/'); // Carpeta temporal para las firmas
-//     },
-//     filename: (req, file, cb) => {
-//       cb(null, `${Date.now()}-${file.originalname}`); // Nombre único del archivo
-//     },
-//   });
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Carpeta temporal para las firmas
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`); // Nombre único del archivo
+    },
+  });
   
-//   const upload = multer({ storage });
+  const upload = multer({ storage });
 
 
 //--------------------------------------------------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ routers.get("/listarPorFicha/:Id_Ficha", [
 
 // -------------------------------------------------------------------------------------------------------------------------
 routers.post("/Insertar", [
-//    upload.single('file'),      // `upload.single('file')` procesa el archivo con nombre 'file' en la solicitud
+   upload.single('file'),      // `upload.single('file')` procesa el archivo con nombre 'file' en la solicitud
     validarJWT,
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
     check('Documento', 'El campo documento es obligatorio').notEmpty(),
