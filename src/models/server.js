@@ -2,8 +2,13 @@ import express from 'express'
 import mongoose from 'mongoose';
 import cors from 'cors'
 import http from 'http';
+// import express from 'express'
 // import { dbconnect } from "../../databases/config.js"
-
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import Usuario from '../../src/routes/Usuarios.js';
 import Aprendiz from '../../src/routes/Aprendices.js';
@@ -35,6 +40,7 @@ class Server {
         this.app.use(cors());
         this.app.use(express.json());
         this.app.use(express.static('public'));
+        this.app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
     }
 
 
