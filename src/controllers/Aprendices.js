@@ -72,14 +72,13 @@ const httpAprendiz = {
         }
     },
 
-    // --------------------------------------
-
-
-
     // insertar--------------------------------------------------------------------------------------------------------------
     postAprediz: async (req, res) => {
         const { Documento, Nombre, Telefono, Email, Id_Ficha } = req.body
         const file = req.file; // Multer maneja la subida de archivos
+        if (!file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }        
 
         try {
             // Subir la firma del aprendiz a Cloudinary
@@ -97,6 +96,11 @@ const httpAprendiz = {
                 Id_Ficha,
                 Firma: uploadResult.secure_url
             }); // Guardar la URL de la firma en la base de datos
+
+            if(!nuevoAprediz){
+                return res.status(404).json({error: "no se agrego el aprendiz"})
+            }
+
             await nuevoAprediz.save();
             // Eliminar el archivo temporal después de subirlo
             fs.unlinkSync(file.path);
