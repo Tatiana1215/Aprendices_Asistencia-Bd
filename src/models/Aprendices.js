@@ -7,7 +7,7 @@ const aprendicesSchema = new mongoose.Schema({
     Telefono: { type: String, require: true, unique: true, min: 10 },
     Email: { type: String, require: true, unique: true },
     Estado: { type: Number, require: true, default: 1 },
-    firma: { type: String, // Aquí almacenamos la ruta del archivo de la firma
+    Firma: { type: String, // Aquí almacenamos la ruta del archivo de la firma
              required: false // Este campo es opcional
     },
     Id_Ficha: { type: mongoose.Schema.Types.ObjectId, ref: 'Ficha' }

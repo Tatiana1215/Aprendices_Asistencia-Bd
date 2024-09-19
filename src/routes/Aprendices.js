@@ -2,29 +2,28 @@
 import { check } from "express-validator";
 import { validarCampos } from "../middlewares/validar-campos.js";
 import {validarJWT} from '../middlewares/validarJWT.js'
-import {httpAprendiz, uploadFirma} from '../controllers/Aprendices.js'
+import {httpAprendiz} from '../controllers/Aprendices.js'
 import { aprendizHelper } from "../helpers/Aprendices.js";
 import { Router } from "express";
 import express from 'express';
 import multer from 'multer';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// const { check } = require("express-validator");
-// const { validarCampos } = require("../middlewares/validar-campos");
-// const { validarJWT } = require("../middlewares/validarJWT");
-// const { httpAprendiz } = require("../controllers/Aprendices");
-// const { aprendizHelper } = require("../helpers/Aprendices");
-// const { Router } = require("express");
-
 const routers = Router()
 
-const upload = multer({ dest: 'uploads/' });
+// Configuración de Multer para almacenar archivos temporalmente
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'uploads/'); // Carpeta temporal para las firmas
+    },
+    filename: (req, file, cb) => {
+      cb(null, `${Date.now()}-${file.originalname}`); // Nombre único del archivo
+    },
+  });
+  
+  const upload = multer({ storage });
+
+
 //--------------------------------------------------------------------------------------------------------------------------
-routers.get("/listarTodo",express.static(path.join(__dirname, 'uploads')), [
+routers.get("/listarTodo", [
     validarJWT
 ], httpAprendiz.getAprendicesListarTodo)
 
@@ -44,8 +43,8 @@ routers.get("/listarPorFicha/:Id_Ficha", [
 ], httpAprendiz.getAprendizListarFicha)
 
 // -------------------------------------------------------------------------------------------------------------------------
-routers.post("/Insertar",upload.single('firma'), [
-    uploadFirma,
+routers.post("/Insertar", [
+   upload.single('file'),      // `upload.single('file')` procesa el archivo con nombre 'file' en la solicitud
     // validarJWT,
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
     check('Documento', 'El campo documento es obligatorio').notEmpty(),
@@ -61,13 +60,10 @@ routers.post("/Insertar",upload.single('firma'), [
     check('Id_Ficha', 'El campo Id_Fecha es obligatorio').notEmpty(),
     validarCampos,
     // validarJWT
+
 ], httpAprendiz.postAprediz, )
 
 
-
-routers.post('/firma',
-    uploadFirma
-)
 // ------------------------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id", [
     check('id', 'El id no es valido').isMongoId(),
