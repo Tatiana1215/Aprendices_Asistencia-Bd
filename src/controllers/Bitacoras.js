@@ -130,6 +130,7 @@ const httpBitacoras = {
         }
     },
     
+    
     //   listar por ficha-------------------------------------------------------------------------------------------------
     getListarBitacorasPorFicha: async (req, res) => {
         const { Id_Ficha } = req.params;
