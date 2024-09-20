@@ -16,17 +16,8 @@
 
 // const Aprendiz = require('../models/Aprendices')
 import Aprendiz from '../models/Aprendices.js'
-import { v2 as cloudinary } from 'cloudinary';
-import fs from 'fs'; // Para eliminar el archivo después de subirlo
-
-// dotenv.config();
-
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-});
-
+import cloudinary from '../../config/cloudinaryConfig.js'
+// import fs from 'fs'; // Para eliminar el archivo después de subirlo
 
 const httpAprendiz = {
     //listar todos los aprendices-------------------------------------------------------------------------------
@@ -77,7 +68,7 @@ const httpAprendiz = {
         const { Documento, Nombre, Telefono, Email, Id_Ficha } = req.body
         const file = req.file; // Multer maneja la subida de archivos
         if (!file) {
-            return res.status(400).json({ error: 'No file uploaded' });
+            return res.status(400).json({ mensaje: 'No file uploaded' });
         }        
 
         try {
@@ -88,6 +79,7 @@ const httpAprendiz = {
                 fetch_format: 'auto',
                 quality: 'auto',
             });
+
             const nuevoAprediz = new Aprendiz({
                 Documento,
                 Nombre,
@@ -97,13 +89,13 @@ const httpAprendiz = {
                 Firma: uploadResult.secure_url
             }); // Guardar la URL de la firma en la base de datos
 
-            if(!nuevoAprediz){
-                return res.status(404).json({error: "no se agrego el aprendiz"})
+            if (!nuevoAprediz) {
+                return res.status(404).json({ error: "no se agrego el aprendiz" })
             }
 
             await nuevoAprediz.save();
             // Eliminar el archivo temporal después de subirlo
-            fs.unlinkSync(file.path);
+            // fs.unlinkSync(file.path);
 
             res.json(nuevoAprediz)
         } catch (error) {
