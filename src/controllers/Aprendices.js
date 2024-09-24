@@ -16,10 +16,68 @@
 
 // const Aprendiz = require('../models/Aprendices')
 import Aprendiz from '../models/Aprendices.js'
-import cloudinary from '../../config/cloudinaryConfig.js'
+// import cloudinary from '../../config/cloudinaryConfig.js'
 // import fs from 'fs'; // Para eliminar el archivo después de subirlo
+import subirArchivo from '../helpers/subir_archivo.js';
+import * as fs from 'fs'
+import path from 'path'
+import url from 'url'
+import { v2 as cloudinary } from 'cloudinary'
 
 const httpAprendiz = {
+// --------------------
+cargarArchivoCloud : async (req, res) => {
+        cloudinary.config({
+            cloud_name: process.env.CLOUD_NAME,
+            api_key: process.env.API_KEY,
+            api_secret: process.env.API_SECRET,
+            secure: true
+        });
+
+        const { id } = req.params;
+        try {
+            //subir archivo
+            const { tempFilePath } = req.files.archivo
+            cloudinary.uploader.upload(tempFilePath,
+                { width: 250, crop: "limit" },
+                async function (error, result) {
+                    if (result) {
+                        let envio = await Aprendiz.findById(id);
+                        if (envio.Firma) {
+                            const nombreTemp = envio.Firma.split('/')
+                            const nombreArchivo = nombreTemp[nombreTemp.length - 1] // hgbkoyinhx9ahaqmpcwl jpg
+                            const [public_id] = nombreArchivo.split('.')
+                            cloudinary.uploader.destroy(public_id)
+                        }
+                        envio = await Aprendiz.findByIdAndUpdate(id, { Firma: result.url })
+
+                        res.json({ url: result.url });
+                    } else {
+                        res.json(error)
+                    }
+
+                })
+        } catch (error) {
+            res.status(400).json({ error, 'general': 'Controlador' })
+        }
+    },
+
+
+    mostrarImagenCloud : async (req, res) => {
+        const { id } = req.params
+
+        try {
+            let aprendiz = await Aprendiz.findById(id)
+            if (aprendiz.Firma) {
+                return res.json({ url: aprendiz.Firma})
+            }
+            res.status(400).json({ msg: 'Falta Imagen' })
+        } catch (error) {
+            res.status(400).json({ error })
+        }
+    },
+
+
     //listar todos los aprendices-------------------------------------------------------------------------------
     getAprendicesListarTodo: async (req, res) => {
         try {
