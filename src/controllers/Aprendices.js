@@ -63,6 +63,7 @@ cargarArchivoCloud : async (req, res) => {
     },
 
 
+    
     mostrarImagenCloud : async (req, res) => {
         const { id } = req.params
 
