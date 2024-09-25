@@ -16,19 +16,69 @@
 
 // const Aprendiz = require('../models/Aprendices')
 import Aprendiz from '../models/Aprendices.js'
-import { v2 as cloudinary } from 'cloudinary';
-import fs from 'fs'; // Para eliminar el archivo después de subirlo
-
-// dotenv.config();
-
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-});
-
+// import cloudinary from '../../config/cloudinaryConfig.js'
+// import fs from 'fs'; // Para eliminar el archivo después de subirlo
+import subirArchivo from '../helpers/subir_archivo.js';
+import * as fs from 'fs'
+import path from 'path'
+import url from 'url'
+import { v2 as cloudinary } from 'cloudinary'
 
 const httpAprendiz = {
+// --------------------
+cargarArchivoCloud : async (req, res) => {
+        cloudinary.config({
+            cloud_name: process.env.CLOUD_NAME,
+            api_key: process.env.API_KEY,
+            api_secret: process.env.API_SECRET,
+            secure: true
+        });
+
+        const { id } = req.params;
+        try {
+            //subir archivo
+            const { tempFilePath } = req.files.archivo
+            cloudinary.uploader.upload(tempFilePath,
+                { width: 250, crop: "limit" },
+                async function (error, result) {
+                    if (result) {
+                        let envio = await Aprendiz.findById(id);
+                        if (envio.Firma) {
+                            const nombreTemp = envio.Firma.split('/')
+                            const nombreArchivo = nombreTemp[nombreTemp.length - 1] // hgbkoyinhx9ahaqmpcwl jpg
+                            const [public_id] = nombreArchivo.split('.')
+                            cloudinary.uploader.destroy(public_id)
+                        }
+                        envio = await Aprendiz.findByIdAndUpdate(id, { Firma: result.url })
+
+                        res.json({ url: result.url });
+                    } else {
+                        res.json(error)
+                    }
+
+                })
+        } catch (error) {
+            res.status(400).json({ error, 'general': 'Controlador' })
+        }
+    },
+
+
+    
+    mostrarImagenCloud : async (req, res) => {
+        const { id } = req.params
+
+        try {
+            let aprendiz = await Aprendiz.findById(id)
+            if (aprendiz.Firma) {
+                return res.json({ url: aprendiz.Firma})
+            }
+            res.status(400).json({ msg: 'Falta Imagen' })
+        } catch (error) {
+            res.status(400).json({ error })
+        }
+    },
+
+
     //listar todos los aprendices-------------------------------------------------------------------------------
     getAprendicesListarTodo: async (req, res) => {
         try {
@@ -72,14 +122,13 @@ const httpAprendiz = {
         }
     },
 
-    // --------------------------------------
-
-
-
     // insertar--------------------------------------------------------------------------------------------------------------
     postAprediz: async (req, res) => {
         const { Documento, Nombre, Telefono, Email, Id_Ficha } = req.body
         const file = req.file; // Multer maneja la subida de archivos
+        if (!file) {
+            return res.status(400).json({ mensaje: 'No file uploaded' });
+        }        
 
         try {
             // Subir la firma del aprendiz a Cloudinary
@@ -98,9 +147,14 @@ const httpAprendiz = {
                 Id_Ficha,
                 Firma: uploadResult.secure_url
             }); // Guardar la URL de la firma en la base de datos
+
+            if (!nuevoAprediz) {
+                return res.status(404).json({ error: "no se agrego el aprendiz" })
+            }
+
             await nuevoAprediz.save();
             // Eliminar el archivo temporal después de subirlo
-            fs.unlinkSync(file.path);
+            // fs.unlinkSync(file.path);
 
             res.json(nuevoAprediz)
         } catch (error) {

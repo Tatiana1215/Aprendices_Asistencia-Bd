@@ -157,31 +157,13 @@ const httpUsarios = {
       if (!usuario) {
         return res.status(404).json({ mensaje: "No existe usuario con ese email" });
       }
-      // res.json('El usuario es correcto')
-
-      // // Crear un token único para el usuario
-      // const token = crypto.randomBytes(20).toString('hex');
-
-      // // Establecer la fecha  expiración del token
-      // usuario.resetPasswordToken = token;
-      
-
-// console.log('este es el token',token);
-// console.log(resetPasswordToken);
+  
 
 usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
   const codigoVerificacion = Math.floor(100000 + Math.random() * 900000); // Genera un código de 6 dígitos
       usuario.resetPasswordCodigo = codigoVerificacion;
       await usuario.save();
-      // Configurar el transporter para enviar correos
-      // const transporter = nodemailer.createTransport({
-      //   service: "Gmail",
-      //   auth: {
-      //     user: process.env.EMAIL_USER,
-      //     pass: process.env.EMAIL_PASS,
-      //   },
-      // });
-
+   
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',

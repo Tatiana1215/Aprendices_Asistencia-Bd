@@ -3,23 +3,24 @@ import { check } from "express-validator";
 import { validarCampos } from "../middlewares/validar-campos.js";
 import {validarJWT} from '../middlewares/validarJWT.js'
 import {httpAprendiz} from '../controllers/Aprendices.js'
+import validarExistaArchivo from '../middlewares/validar_file.js';
 import { aprendizHelper } from "../helpers/Aprendices.js";
 import { Router } from "express";
 import express from 'express';
-import multer from 'multer';
+// import multer from 'multer';
 const routers = Router()
 
 // Configuración de Multer para almacenar archivos temporalmente
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/'); // Carpeta temporal para las firmas
-    },
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${file.originalname}`); // Nombre único del archivo
-    },
-  });
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//       cb(null, 'uploads/'); // Carpeta temporal para las firmas
+//     },
+//     filename: (req, file, cb) => {
+//       cb(null, `${Date.now()}-${file.originalname}`); // Nombre único del archivo
+//     },
+//   });
   
-  const upload = multer({ storage });
+//   const upload = multer({ storage });
 
 
 //--------------------------------------------------------------------------------------------------------------------------
@@ -44,8 +45,8 @@ routers.get("/listarPorFicha/:Id_Ficha", [
 
 // -------------------------------------------------------------------------------------------------------------------------
 routers.post("/Insertar", [
-   upload.single('file'),      // `upload.single('file')` procesa el archivo con nombre 'file' en la solicitud
-    // validarJWT,
+//    upload.single('file'),      // `upload.single('file')` procesa el archivo con nombre 'file' en la solicitud
+    validarJWT,
     check('Nombre', 'El campo Nombre es obligatorio').notEmpty(),
     check('Documento', 'El campo documento es obligatorio').notEmpty(),
     check('Telefono', 'El campo telefono es obligatorio').notEmpty(),
@@ -91,6 +92,20 @@ routers.put("/Desactivar/:id", [
     validarCampos,
     // validarJWT
 ], httpAprendiz.putAprendizDesactivar)
+// ---
+routers.put("/cargarCloud/:id",[
+    validarJWT,
+    check('id').isMongoId(),
+    // check('id').custom(aprendicesHelper.existeAprendizID),
+    validarExistaArchivo,
+    validarCampos
+],httpAprendiz.cargarArchivoCloud);
 
+routers.get("/uploadClou/:id",[ // img
+    validarJWT,
+    check('id', 'No es un ID válido').isMongoId(),
+    // check('id').custom(aprendicesHelper.existeAprendizID), 
+    validarCampos
+],httpAprendiz.mostrarImagenCloud)
 export default routers
 
