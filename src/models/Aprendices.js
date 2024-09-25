@@ -13,4 +13,4 @@ const aprendicesSchema = new mongoose.Schema({
     Id_Ficha: { type: mongoose.Schema.Types.ObjectId, ref: 'Ficha' }
 })
 export default mongoose.model("Aprendiz", aprendicesSchema)
-// ElementInternals,telefono
+

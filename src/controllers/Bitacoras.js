@@ -125,7 +125,7 @@ const httpBitacoras = {
     
             res.status(200).json(formattedBitacoras);
         } catch (error) {
-            console.error("Error en getListarBitacorasPorFichaYFechas:", error);
+            console.error("Error en ", error);
             res.status(500).json({ message: error.message });
         }
     },
@@ -357,21 +357,26 @@ const httpBitacoras = {
     
     obtenerBitacorasPorFichaYFecha: async (req, res) => {
         const { fichaNumero, fecha } = req.query;
+    
+        if (!fecha) {
+            return res.status(400).json({ message: 'La fecha es requerida' });
+        }
+    
+        // Validar formato de fecha (YYYY-MM-DD)
+        const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!fechaRegex.test(fecha)) {
+            return res.status(400).json({ message: 'El formato de la fecha es incorrecto' });
+        }
+    
         try {
             // Buscar el ObjectId de la ficha usando el número de ficha
             const ficha = await Fichas.findOne({ Codigo: fichaNumero });
             if (!ficha) {
                 return res.status(404).json({ message: 'Ficha no encontrada' });
             }
-            console.log(ficha);
-                
+    
             // Buscar todos los aprendices que tienen esta ficha
             const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
-            if(!aprendices){
-                console.log('no hay nada')
-            }
-            console.log(aprendices); // Verificar los aprendices encontrados
-
             if (aprendices.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron aprendices para esta ficha' });
             }
@@ -387,9 +392,9 @@ const httpBitacoras = {
             // Buscar bitácoras para los aprendices que asistieron en la fecha especificada
             const bitacoras = await Bitacoras.find({
                 createdAt: { $gte: startDate, $lte: endDate },
-                Id_Aprendiz: { $in: aprendices.map(a => a._id) },  // Asegúrate de que sea Id_Aprendiz
-                Estado: 'Asistio' // Filtro por estado exacto definido en el enum
-            }).populate('Id_Aprendiz', 'Nombre Documento');  // Popula los datos del aprendiz
+                Id_Aprendiz: { $in: aprendices.map(a => a._id) },
+                Estado: 'Asistio'
+            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');
     
             // Si no hay bitácoras, responde con un mensaje adecuado
             if (bitacoras.length === 0) {
@@ -400,9 +405,8 @@ const httpBitacoras = {
             const formattedBitacoras = bitacoras.map(bitacora => ({
                 documento: bitacora.Id_Aprendiz.Documento,
                 nombre: bitacora.Id_Aprendiz.Nombre,
-                emailAprendiz:bitacora.Id_Aprendiz.Email,
-                telefonoAprendiz:bitacora.Id_Aprendiz.Telefono
-                
+                emailAprendiz: bitacora.Id_Aprendiz.Email,
+                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono
             }));
     
             res.status(200).json(formattedBitacoras);
@@ -410,6 +414,7 @@ const httpBitacoras = {
             res.status(500).json({ message: error.message });
         }
     }
+    
 
 }
 
