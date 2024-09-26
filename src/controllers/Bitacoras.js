@@ -121,8 +121,8 @@ const httpBitacoras = {
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
                 nombreFicha: ficha.Nombre,  // Asegúrate de que esta propiedad está disponible en el modelo
-                fechaAsistencia: bitacora.createdAt.toLocaleString(), // Formatear la fecha
-                estado: bitacora.Estado   //
+                createdAt: bitacora.createdAt.toLocaleString(), // Formatear la fecha
+                Estado: bitacora.Estado 
             }));
     
             res.status(200).json(formattedBitacoras);
