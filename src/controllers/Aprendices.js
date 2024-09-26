@@ -58,7 +58,7 @@ const httpAprendiz = {
 
                 })
         } catch (error) {
-            res.status(400).json({ error, 'general': 'Controlador' })
+            res.status(500).json({ error, 'general': 'Controlador' })
         }
     },
 
@@ -157,7 +157,7 @@ const httpAprendiz = {
             }); // Guardar la URL de la firma en la base de datos
 
             if (!nuevoAprediz) {
-                return res.status(404).json({ error: "no se agrego el aprendiz" })
+                return res.status(404).json({ message: "no se agrego el aprendiz" })
             }
 
             await nuevoAprediz.save();

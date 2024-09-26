@@ -94,7 +94,7 @@ routers.put("/Desactivar/:id", [
 ], httpAprendiz.putAprendizDesactivar)
 // ---
 routers.put("/cargarCloud/:id",[
-    validarJWT,
+    // validarJWT,
     check('id').isMongoId(),
     // check('id').custom(aprendicesHelper.existeAprendizID),
     validarExistaArchivo,
@@ -102,7 +102,7 @@ routers.put("/cargarCloud/:id",[
 ],httpAprendiz.cargarArchivoCloud);
 
 routers.get("/uploadClou/:id",[ // img
-    validarJWT,
+    // validarJWT,
     check('id', 'No es un ID válido').isMongoId(),
     // check('id').custom(aprendicesHelper.existeAprendizID), 
     validarCampos
