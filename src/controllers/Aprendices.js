@@ -25,8 +25,8 @@ import url from 'url'
 import { v2 as cloudinary } from 'cloudinary'
 
 const httpAprendiz = {
-// --------------------
-cargarArchivoCloud : async (req, res) => {
+    // --------------------
+    cargarArchivoCloud: async (req, res) => {
         cloudinary.config({
             cloud_name: process.env.CLOUD_NAME,
             api_key: process.env.API_KEY,
@@ -63,14 +63,14 @@ cargarArchivoCloud : async (req, res) => {
     },
 
 
-    
-    mostrarImagenCloud : async (req, res) => {
+
+    mostrarImagenCloud: async (req, res) => {
         const { id } = req.params
 
         try {
             let aprendiz = await Aprendiz.findById(id)
             if (aprendiz.Firma) {
-                return res.json({ url: aprendiz.Firma})
+                return res.json({ url: aprendiz.Firma })
             }
             res.status(400).json({ msg: 'Falta Imagen' })
         } catch (error) {
@@ -124,20 +124,28 @@ cargarArchivoCloud : async (req, res) => {
 
     // insertar--------------------------------------------------------------------------------------------------------------
     postAprediz: async (req, res) => {
-        const { Documento, Nombre, Telefono, Email, Id_Ficha } = req.body
-        const file = req.file; // Multer maneja la subida de archivos
-        if (!file) {
-            return res.status(400).json({ mensaje: 'No file uploaded' });
-        }        
 
+        cloudinary.config({
+            cloud_name: process.env.CLOUD_NAME,
+            api_key: process.env.API_KEY,
+            api_secret: process.env.API_SECRET,
+            secure: true
+        });
+
+        const { Documento, Nombre, Telefono, Email, Id_Ficha } = req.body
         try {
-            // Subir la firma del aprendiz a Cloudinary
-            const uploadResult = await cloudinary.uploader.upload(file.path, {
-                public_id: `${Nombre}_${Documento}_Firma`,
-                folder: 'Firmas',
-                fetch_format: 'auto',
-                quality: 'auto',
-            });
+            // Subir archivo de firma si existe
+            let firmaUrl = null;
+            if (req.files && req.files.archivo) {
+                const { tempFilePath } = req.files.archivo;
+
+                // Subir archivo a Cloudinary
+                const result = await cloudinary.uploader.upload(tempFilePath, { width: 250, crop: "limit" });
+                firmaUrl = result.url;
+
+                // Eliminar el archivo temporal una vez que ha sido subido
+                fs.unlinkSync(tempFilePath);
+            }
 
             const nuevoAprediz = new Aprendiz({
                 Documento,
@@ -145,7 +153,7 @@ cargarArchivoCloud : async (req, res) => {
                 Telefono,
                 Email,
                 Id_Ficha,
-                Firma: uploadResult.secure_url
+                Firma: firmaUrl
             }); // Guardar la URL de la firma en la base de datos
 
             if (!nuevoAprediz) {
