@@ -61,6 +61,9 @@ const httpAprendiz = {
             res.status(500).json({ error, 'general': 'Controlador' })
         }
     },
+
+
+
     mostrarImagenCloud: async (req, res) => {
         const { id } = req.params
 

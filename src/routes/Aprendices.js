@@ -10,19 +10,6 @@ import express from 'express';
 // import multer from 'multer';
 const routers = Router()
 
-// Configuración de Multer para almacenar archivos temporalmente
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//       cb(null, 'uploads/'); // Carpeta temporal para las firmas
-//     },
-//     filename: (req, file, cb) => {
-//       cb(null, `${Date.now()}-${file.originalname}`); // Nombre único del archivo
-//     },
-//   });
-  
-//   const upload = multer({ storage });
-
-
 //--------------------------------------------------------------------------------------------------------------------------
 routers.get("/listarTodo", [
     validarJWT
