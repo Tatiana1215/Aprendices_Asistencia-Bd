@@ -26,7 +26,7 @@ routers.post("/crear", [
     validarJWT,
      check('Nombre', 'El campo nombre es obligatorio').notEmpty(),
     check('Codigo', ' El campo del codigo es obligatorio').notEmpty(),
-    check('Codigo', 'El Codigo debe tener 7 caracteres').isLength({min:7, max:7 }),
+    check('Codigo', 'El Codigo debe tener 7 caracteres').isLength({min:7, max:7 }).isNumeric(),
     check('Nombre', ' EL Nombre debe tener maximo 50 caracteres ').isLength({ max:50 }),
     check('Codigo').custom(fichaHelper.existsCodigo),
     validarCampos,
@@ -37,7 +37,7 @@ routers.post("/crear", [
 routers.put("/Actualizar/:id", [
     check('id', 'el id es invalido').isMongoId(),
     // check('Codigo').custom(fichaHelper.existsCodigo),
-    check('Codigo', 'El Codigo debe tener 7 caracteres').isLength({ min:7, max:7 }),
+    check('Codigo', 'El Codigo debe tener 7 caracteres').isLength({ min:7, max:7 }).isNumeric(),
     check('Nombre', ' EL Nombre debe tener maximo 50 caracteres ').isLength({ max: 50 }),
        check('Codigo').custom(async (Codigo, { req }) => {
         // Aquí usamos el helper para la validación
