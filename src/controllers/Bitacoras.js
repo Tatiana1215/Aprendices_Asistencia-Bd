@@ -116,10 +116,11 @@ const httpBitacoras = {
     
             // Formatear la respuesta para incluir los valores deseados
             const formattedBitacoras = bitacoras.map(bitacora => ({
-                documento: bitacora.Id_Aprendiz.Documento,
-                nombre: bitacora.Id_Aprendiz.Nombre,
-                emailAprendiz: bitacora.Id_Aprendiz.Email,
+                nombreAprendiz: bitacora.Id_Aprendiz.Nombre,
+                documentoAprendiz: bitacora.Id_Aprendiz.Documento,
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
+                emailAprendiz: bitacora.Id_Aprendiz.Email,
+                nombreFicha:bitacora.Id_Aprendiz.Nombre,
                 fechaAsistencia: bitacora.createdAt
             }));
     
@@ -129,7 +130,6 @@ const httpBitacoras = {
             res.status(500).json({ message: error.message });
         }
     },
-    
     
     //   listar por ficha-------------------------------------------------------------------------------------------------
     getListarBitacorasPorFicha: async (req, res) => {
