@@ -42,10 +42,11 @@ validarJWT
 // 
 // ----------------------------------------------------------------------------------------------------
 routers.post("/Insertar",[
-    // validarJWT,
     // check('Id_Aprendiz','El id aprendiz no es valido').isMongoId(),
     check('Documento', 'El campo del Documento es obligatorio').notEmpty(),
     check("Documento").custom(bitacoraHelper.existeDocAprendiz),
+    check("Documento",'El campo de Documento debe tener maximo 10 caracteres').isLength({max:10}),
+    check("Documento",'El numero de documento deben ser numeros').isNumeric(),
     // check("Documento").custom(bitacoraHelper.unicoDocAprendiz),
     validarCampos,
 ],httpBitacoras.postInsertaBitacora)
