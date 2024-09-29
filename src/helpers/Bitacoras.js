@@ -28,7 +28,7 @@ validarDocumento: async (Documento) => {
             // Crear una nueva bitácora para hoy
             const nuevaBitacora = new Bitacora({
                 Id_Aprendiz: aprendiz._id,
-                Estado: 'Asistio' // O el estado que corresponda
+                // Estado: 'Asistio' // O el estado que corresponda
             });
             await nuevaBitacora.save();
             return "Asistencia registrada correctamente";
