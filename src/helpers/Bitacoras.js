@@ -24,15 +24,7 @@ validarDocumento: async (Documento) => {
 
         if (bitacoraHoy) {
             throw new Error("El Documento del aprendiz ya fue ingresado hoy");
-        } else {
-            // Crear una nueva bitácora para hoy
-            const nuevaBitacora = new Bitacora({
-                Id_Aprendiz: aprendiz._id,
-                // Estado: 'Asistio' // O el estado que corresponda
-            });
-            await nuevaBitacora.save();
-            return "Asistencia registrada correctamente";
-        }
+        } 
     } else {
         throw new Error("El Documento del aprendiz no existe");
     }
