@@ -25,9 +25,7 @@ validarDocumento: async (Documento) => {
         if (bitacoraHoy) {
             throw new Error("El Documento del aprendiz ya fue ingresado hoy");
         } 
-    } else {
-        throw new Error("El Documento del aprendiz no existe");
-    }
+    } 
 }
 
 
