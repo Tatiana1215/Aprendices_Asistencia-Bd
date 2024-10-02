@@ -173,11 +173,13 @@ const httpAprendiz = {
     putAprendiz: async (req, res) => {
         const { id } = req.params
         try {
-            const { Documento, Nombre, Id_Ficha } = req.body
+            const { Documento, Nombre, Telefono, Email, Id_Ficha } = req.body
             const aprendiz = await Aprendiz.findById(id)
             if (aprendiz) {
                 aprendiz.Documento = Documento
                 aprendiz.Nombre = Nombre
+                aprendiz.Telefono = Telefono
+                aprendiz.Email = Email
                 aprendiz.Id_Ficha = Id_Ficha
                 await aprendiz.save()
                 res.json(aprendiz)
