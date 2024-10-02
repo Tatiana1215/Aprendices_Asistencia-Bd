@@ -58,7 +58,7 @@ routers.post('/reset/:id', [
 routers.post("/insertar",[
     // validarJWT,
 check('Nombre','El campo Nombre es obligatorio').notEmpty(),
-check('Email','El campo Email es obligatorio').notEmpty(),
+check('Email','El campo Email es obligatorio').notEmpty().isEmail,
 check('Password','El campo password es obligatorio').notEmpty(),
 check('Email').custom(usuarioHelper.existsEmail),
 // check('Password').custom(usuarioHelper.existePassword),
