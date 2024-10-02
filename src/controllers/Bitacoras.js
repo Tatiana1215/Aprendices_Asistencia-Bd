@@ -101,7 +101,6 @@ const httpBitacoras = {
             // Ajustar la fecha final al final del día
             fechaFinal.setHours(23, 59, 59, 999);
 
-
             // Validar que las fechas sean válidas
             if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
                 return res.status(400).json({ message: "Formato de fecha no válido" });
