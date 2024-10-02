@@ -9,7 +9,7 @@ import Aprendices from '../models/Aprendices.js'
 import Fichas from '../models/Fichas.js'
 import Bitacoras from '../models/Bitacoras.js'
 import mongoose from 'mongoose';
- 
+
 
 const httpBitacoras = {
 
@@ -70,50 +70,55 @@ const httpBitacoras = {
         }
     },
 
-     //   listar toda-----------------------------------------------------------------------------------------------------
+    //   listar toda-----------------------------------------------------------------------------------------------------
     getListarTodo: async (req, res) => {
         const { fichaNumero, FechaInicial, FechaFinal } = req.query;
-    
+
         try {
             // Buscar el ObjectId de la ficha usando el número de ficha
             const ficha = await Fichas.findOne({ Codigo: fichaNumero });
             if (!ficha) {
                 return res.status(404).json({ message: 'Ficha no encontrada' });
             }
-    
+
             // Buscar todos los aprendices que tienen esta ficha
             const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
-    
+
             if (aprendices.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron aprendices para esta ficha' });
             }
-    
+
             // Validar que las fechas estén proporcionadas
             if (!FechaInicial || !FechaFinal) {
                 return res.status(400).json({ message: "Fechas no proporcionadas" });
             }
-    
+
             // Convertir las fechas a objetos Date
             const fechaInicial = new Date(FechaInicial);
             const fechaFinal = new Date(FechaFinal);
-    
+
+
+            // Ajustar la fecha final al final del día
+            fechaFinal.setHours(23, 59, 59, 999);
+
+
             // Validar que las fechas sean válidas
             if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
                 return res.status(400).json({ message: "Formato de fecha no válido" });
             }
-    
+
             // Buscar bitácoras para los aprendices entre las fechas especificadas
             const bitacoras = await Bitacoras.find({
                 createdAt: { $gte: fechaInicial, $lte: fechaFinal },
                 Id_Aprendiz: { $in: aprendices.map(a => a._id) },
                 Estado: 'Asistio'
             }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');  // Popula los datos del aprendiz
-    
+
             // Si no hay bitácoras, responde con un mensaje adecuado
             if (bitacoras.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron bitácoras para los aprendices en el rango de fechas con el estado "Asistió"' });
             }
-    
+
             // Formatear la respuesta para incluir los valores deseados
             const formattedBitacoras = bitacoras.map(bitacora => ({
                 nombreAprendiz: bitacora.Id_Aprendiz.Nombre,
@@ -122,16 +127,16 @@ const httpBitacoras = {
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
                 nombreFicha: ficha.Nombre,  // Asegúrate de que esta propiedad está disponible en el modelo
                 createdAt: bitacora.createdAt.toLocaleString(), // Formatear la fecha
-                Estado: bitacora.Estado 
+                Estado: bitacora.Estado
             }));
-    
+
             res.status(200).json(formattedBitacoras);
         } catch (error) {
             console.error("Error en ", error);
             res.status(500).json({ message: error.message });
         }
     },
-    
+
     //   listar por ficha-------------------------------------------------------------------------------------------------
     getListarBitacorasPorFicha: async (req, res) => {
         const { Id_Ficha } = req.params;
@@ -194,27 +199,27 @@ const httpBitacoras = {
 
     getListarBitacorasPorFichaYFechas: async (req, res) => {
         const { Id_Ficha, FechaInicial, FechaFinal } = req.query;
-        
+
         try {
             // Verificar si Id_Ficha es un ObjectId válido
             if (!mongoose.Types.ObjectId.isValid(Id_Ficha)) {
                 return res.status(400).json({ mensaje: "Id de ficha no válido" });
             }
-    
+
             // Validar que las fechas estén proporcionadas
             if (!FechaInicial || !FechaFinal) {
                 return res.status(400).json({ mensaje: "Fechas no proporcionadas" });
             }
-    
+
             // Convertir las fechas a objetos Date
             const fechaInicial = new Date(FechaInicial);
             const fechaFinal = new Date(FechaFinal);
-    
+
             // Validar que las fechas sean válidas
             if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
                 return res.status(400).json({ mensaje: "Formato de fecha no válido" });
             }
-    
+
             // Consulta de agregación para buscar bitácoras por Id_Ficha y fechas
             const result = await Bitacoras.aggregate([
                 {
@@ -253,13 +258,13 @@ const httpBitacoras = {
                     }
                 }
             ]);
-    
+
             if (result.length > 0) {
                 res.json(result);
             } else {
                 res.json({ mensaje: "No hay bitácoras para la ficha y rango de fechas proporcionados" });
             }
-    
+
         } catch (error) {
             console.error("Error en getListarBitacorasPorFichaYFechas:", error);
             res.status(500).json({ error: error.message });
@@ -286,9 +291,9 @@ const httpBitacoras = {
         try {
             const { Documento } = req.body
 
-              // Buscar al aprendiz por el número de documento
+            // Buscar al aprendiz por el número de documento
             const aprendiz = await Aprendices.findOne({ Documento })
-            
+
             // Verificar si el aprendiz existe
             if (!aprendiz) {
                 return res.status(404).json({ mensaje: 'No se encontró un aprendiz con ese numero  documento' })
@@ -309,7 +314,7 @@ const httpBitacoras = {
         try {
 
             const bitacora = await Bitacoras.findById(id)
-            const { Id_Aprendiz} = req.body
+            const { Id_Aprendiz } = req.body
             if (bitacora) {
                 bitacora.Id_Aprendiz = Id_Aprendiz
                 // bitacora.FechaHora = FechaHora
@@ -356,53 +361,53 @@ const httpBitacoras = {
             res.status(500).json({ error: 'Error al actualizar estado' });
         }
     },
-    
+
     obtenerBitacorasPorFichaYFecha: async (req, res) => {
         const { fichaNumero, fecha } = req.query;
-    
+
         if (!fecha) {
             return res.status(400).json({ message: 'La fecha es requerida' });
         }
-    
+
         // Validar formato de fecha (YYYY-MM-DD)
         const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
         if (!fechaRegex.test(fecha)) {
             return res.status(400).json({ message: 'El formato de la fecha es incorrecto' });
         }
-    
+
         try {
             // Buscar el ObjectId de la ficha usando el número de ficha
             const ficha = await Fichas.findOne({ Codigo: fichaNumero });
             if (!ficha) {
                 return res.status(404).json({ message: 'Ficha no encontrada' });
             }
-    
+
             // Buscar todos los aprendices que tienen esta ficha
             const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
             if (aprendices.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron aprendices para esta ficha' });
             }
-    
+
             // Extraer el año, mes y día del parámetro fecha
             const year = fecha.substring(0, 4);
             const month = fecha.substring(5, 7);
             const day = fecha.substring(8, 10);
-    
+
             const startDate = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
             const endDate = new Date(`${year}-${month}-${day}T23:59:59.999Z`);
-    
+
             // Buscar bitácoras para los aprendices que asistieron en la fecha especificada
             const bitacoras = await Bitacoras.find({
                 createdAt: { $gte: startDate, $lte: endDate },
                 Id_Aprendiz: { $in: aprendices.map(a => a._id) },
                 Estado: 'Asistio'
             }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');
-    
+
             // Si no hay bitácoras, responde con un mensaje adecuado
             if (bitacoras.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron bitácoras para los aprendices en esta fecha con el estado "Asistió"' });
             }
-    
+
             // Formatear la respuesta para incluir los valores deseados
             const formattedBitacoras = bitacoras.map(bitacora => ({
                 documento: bitacora.Id_Aprendiz.Documento,
@@ -411,13 +416,13 @@ const httpBitacoras = {
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
                 firma:bitacora.Id_Aprendiz.Firma
             }));
-    
+
             res.status(200).json(formattedBitacoras);
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     }
-    
+
 
 }
 

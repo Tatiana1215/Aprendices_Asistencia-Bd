@@ -4,14 +4,7 @@ import {validarJWT} from "../middlewares/validarJWT.js"
 import {httpUsarios} from "../controllers/Usuarios.js"
 import { usuarioHelper } from "../helpers/Usuarios.js";
 import { Router } from "express";
-import nodemailer from "nodemailer"
 
-// const { check } = require("express-validator");
-// const { validarCampos } = require("../middlewares/validar-campos");
-// const { validarJWT } = require("../middlewares/validarJWT");
-// const { httpUsarios } = require("../controllers/Usuarios");
-// const { usuarioHelper } = require("../helpers/Usuarios");
-// const { Router } = require("express")
 const routers = Router()
 
 // const nodemailer = require('nodemailer');

@@ -9,20 +9,26 @@ const bitacoraHelper = {
         throw new Error("EL Documento del aprendiz no existe")
     }
 },
+validarDocumento: async (Documento) => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0); // Establecer la hora a 00:00:00
 
-// unicoDocAprendiz: async (Documento)=>{
-//     const unico = await Aprendices.find({Documento:Documento})
-//     if (unico.length > 0) {
-//         throw new Error("El Documento del aprendiz ya existe");
-//     }
-// },
-unicoDocAprendiz: async (Documento) => {
-    const unico = await Aprendices.findOne({ Documento });
-    if (unico) {
-        throw new Error("El Documento del aprendiz ya existe");
-    }
+    const aprendiz = await Aprendices.findOne({ Documento });
+
+    if (aprendiz) {
+        // Verificar si ya existe una bitácora para este aprendiz hoy
+        const bitacoraHoy = await Bitacora.findOne({
+            Id_Aprendiz: aprendiz._id,
+            createdAt: { $gte: hoy }
+        });
+
+        if (bitacoraHoy) {
+            throw new Error("El Documento del aprendiz ya fue ingresado hoy");
+        } 
+    } 
 }
 
 
 }
+
 export {bitacoraHelper}

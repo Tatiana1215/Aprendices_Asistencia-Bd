@@ -1,4 +1,4 @@
-import { check } from "express-validator";
+import { check, header } from "express-validator";
 import { validarCampos } from "../middlewares/validar-campos.js";
 import {validarJWT, generarJWT} from '../middlewares/validarJWT.js'
 import {httpBitacoras} from '../controllers/Bitacoras.js'
@@ -42,11 +42,12 @@ validarJWT
 // 
 // ----------------------------------------------------------------------------------------------------
 routers.post("/Insertar",[
-    // validarJWT,
     // check('Id_Aprendiz','El id aprendiz no es valido').isMongoId(),
     check('Documento', 'El campo del Documento es obligatorio').notEmpty(),
     check("Documento").custom(bitacoraHelper.existeDocAprendiz),
-    // check("Documento").custom(bitacoraHelper.unicoDocAprendiz),
+    check("Documento",'El campo de Documento debe tener maximo 10 caracteres').isLength({max:10}),
+    check("Documento",'El numero de documento deben ser numeros').isNumeric(),
+    check("Documento").custom(bitacoraHelper.validarDocumento),
     validarCampos,
 ],httpBitacoras.postInsertaBitacora)
 
