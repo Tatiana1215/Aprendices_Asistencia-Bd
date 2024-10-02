@@ -66,6 +66,7 @@ const httpBitacoras = {
             // }
 
 
+            
 
               const bitacoras = await Bitacoras.find()
                 // .populate({
@@ -381,19 +382,32 @@ const httpBitacoras = {
                 return res.status(400).json({ msg: "Estado no válido" });
             }
 
-            // Buscar la bitácora por ID y actualizar el estado
-            const bitacora = await Bitacoras.findByIdAndUpdate(id, { Estado }, { new: true });
+            // // Buscar la bitácora por ID y actualizar el estado
+            // const bitacora = await Bitacoras.findByIdAndUpdate(id, { Estado }, { new: true });
 
-            // Verificar si se encontró la bitácora
-            if (!bitacora) {
-                return res.status(404).json({ msg: 'Bitacora no encontrada' });
-            }
+            // // Verificar si se encontró la bitácora
+            // if (!bitacora) {
+            //     return res.status(404).json({ msg: 'Bitacora no encontrada' });
+            // }
 
-            // Guardar la bitácora actualizada
-            await bitacora.save();
+            // // Guardar la bitácora actualizada
+            // await bitacora.save();
 
-            // Enviar la respuesta con la bitácora actualizada
-            res.json(bitacora);
+            // // Enviar la respuesta con la bitácora actualizada
+            // res.json(bitacora);
+
+
+               // Actualizar el estado de la bitácora
+        const bitacora = await Bitacoras.findByIdAndUpdate(id, { Estado }, { new: true })
+        .populate('Id_Aprendiz', 'Nombre Documento Email Telefono')  // Popula los datos del aprendiz
+        .populate('Id_Aprendiz.Id_Ficha', 'Nombre Codigo');  // Popula los datos de la ficha dentro del aprendiz
+
+      // Verificar si la bitácora fue encontrada y actualizada
+      if (!bitacora) {
+          return res.status(404).json({ msg: 'Bitacora no encontrada' });
+      }
+
+      res.json(bitacora);  // Devolver la bitácora actualizada con datos poblados
         } catch (error) {
             console.error('Error al actualizar estado:', error.message);
             res.status(500).json({ error: 'Error al actualizar estado' });
