@@ -69,6 +69,7 @@ const httpBitacoras = {
             res.status(500).json({ error: error.message });
         }
     },
+    
 
     //   listar toda-----------------------------------------------------------------------------------------------------
     getListarTodo: async (req, res) => {
