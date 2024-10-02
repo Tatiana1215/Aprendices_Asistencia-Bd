@@ -69,7 +69,7 @@ const httpBitacoras = {
             res.status(500).json({ error: error.message });
         }
     },
-    
+
 
     //   listar toda-----------------------------------------------------------------------------------------------------
     getListarTodo: async (req, res) => {
@@ -110,8 +110,8 @@ const httpBitacoras = {
             // Buscar bitácoras para los aprendices entre las fechas especificadas
             const bitacoras = await Bitacoras.find({
                 createdAt: { $gte: fechaInicial, $lte: fechaFinal },
-                Id_Aprendiz: { $in: aprendices.map(a => a._id) },
-                Estado: 'Asistio'
+                // Id_Aprendiz: { $in: aprendices.map(a => a._id) },
+                // Estado: 'Asistio'
             }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');  // Popula los datos del aprendiz
 
             // Si no hay bitácoras, responde con un mensaje adecuado
