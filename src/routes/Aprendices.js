@@ -51,6 +51,7 @@ routers.post("/Insertar", [
     validarCampos,
     // validarJWT
 
+    
 ], httpAprendiz.postAprediz,)
 
 
