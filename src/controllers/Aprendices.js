@@ -182,7 +182,7 @@ const httpAprendiz = {
                 await aprendiz.save()
                 res.json(aprendiz)
             } else {
-                res.status(404).json(`El aprendiz no existe`)
+                res.status(404).json({message:'no existe el aprendiz'})
             }
         } catch (error) {
             res.status(400).json({ error })
