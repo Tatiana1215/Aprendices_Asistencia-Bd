@@ -15,61 +15,99 @@ const httpBitacoras = {
 
     getListar: async (req, res) => {
         try {
-            const bitacoras = await Bitacoras.aggregate([
-                {
-                    $lookup: {
-                        from: 'aprendizs', // Nombre de la colección de aprendices
-                        localField: 'Id_Aprendiz',
-                        foreignField: '_id',
-                        as: 'aprendizInfo'
+            // const bitacoras = await Bitacoras.aggregate([
+            //     {
+            //         $lookup: {
+            //             from: 'aprendizs', // Nombre de la colección de aprendices
+            //             localField: 'Id_Aprendiz',
+            //             foreignField: '_id',
+            //             as: 'aprendizInfo'
+            //         }
+            //     },
+            //     {
+            //         $unwind: '$aprendizInfo'
+            //     },
+            //     {
+            //         $lookup: {
+            //             from: 'fichas', // Nombre de la colección de fichas
+            //             localField: 'aprendizInfo.Id_Ficha',
+            //             foreignField: '_id',
+            //             as: 'fichaInfo'
+            //         }
+            //     },
+            //     {
+            //         $unwind: '$fichaInfo'
+            //     },
+            //     {
+            //         $project: {
+            //             _id: 1,
+            //             Estado: 1,
+            //             createdAt: {
+            //                 $dateToString: {
+            //                     format: "%d/%m/%Y %H:%M:%S",
+            //                     date: "$createdAt",
+            //                     timezone: "America/Bogota"
+            //                 }
+            //             },
+            //             'nombreAprendiz': '$aprendizInfo.Nombre',
+            //             'documentoAprendiz': '$aprendizInfo.Documento',
+            //             'telefonoAprendiz': '$aprendizInfo.Telefono',
+            //             'emailAprendiz': '$aprendizInfo.Email',
+            //             'nombreFicha': '$fichaInfo.Nombre'
+            //         }
+            //     }
+            // ]);
+
+            // // Responder con los resultados de la búsqueda
+            // if (bitacoras.length > 0) {
+            //     res.json(bitacoras);
+            // } else {
+            //     res.status(404).json({ mensaje: "No hay bitácoras" });
+            // }
+
+
+
+              const bitacoras = await Bitacoras.find()
+                // .populate({
+                //     path: 'Id_Aprendiz',  // Campo en el modelo Bitacoras que referencia a Aprendices
+                //     select: 'Nombre Documento Telefono Email',  // Campos que quieres obtener del aprendiz
+                // })
+                // .populate({
+                //     path: 'Id_Ficha',  // Campo en el modelo Aprendices que referencia a Fichas
+                //     select: 'Nombre, Codigo',  // Campo que quieres obtener de la ficha
+                // });
+                .populate({
+                    path: 'Id_Aprendiz',  // Campo en el modelo Bitacoras que referencia a Aprendices
+                    select: 'Nombre Documento Telefono Email Id_Ficha',  // Incluye el Id_Ficha del aprendiz
+                    populate: {  // Ahora hacemos populate sobre Id_Ficha dentro del aprendiz
+                        path: 'Id_Ficha',
+                        select: 'Nombre Codigo'  // Campos que quieres obtener de la ficha
                     }
-                },
-                {
-                    $unwind: '$aprendizInfo'
-                },
-                {
-                    $lookup: {
-                        from: 'fichas', // Nombre de la colección de fichas
-                        localField: 'aprendizInfo.Id_Ficha',
-                        foreignField: '_id',
-                        as: 'fichaInfo'
-                    }
-                },
-                {
-                    $unwind: '$fichaInfo'
-                },
-                {
-                    $project: {
-                        _id: 1,
-                        Estado: 1,
-                        createdAt: {
-                            $dateToString: {
-                                format: "%d/%m/%Y %H:%M:%S",
-                                date: "$createdAt",
-                                timezone: "America/Bogota"
-                            }
-                        },
-                        'nombreAprendiz': '$aprendizInfo.Nombre',
-                        'documentoAprendiz': '$aprendizInfo.Documento',
-                        'telefonoAprendiz': '$aprendizInfo.Telefono',
-                        'emailAprendiz': '$aprendizInfo.Email',
-                        'nombreFicha': '$fichaInfo.Nombre'
-                    }
-                }
-            ]);
+                });
+
+            // Formatear la respuesta para incluir los valores deseados
+            const formattedBitacoras = bitacoras.map(bitacora => ({
+                nombreAprendiz: bitacora.Id_Aprendiz ? bitacora.Id_Aprendiz.Nombre : 'Sin aprendiz', // Verificar si existe el aprendiz
+                documentoAprendiz: bitacora.Id_Aprendiz ? bitacora.Id_Aprendiz.Documento : 'N/A',
+                telefonoAprendiz: bitacora.Id_Aprendiz ? bitacora.Id_Aprendiz.Telefono : 'N/A',
+                emailAprendiz: bitacora.Id_Aprendiz ? bitacora.Id_Aprendiz.Email :'N/A',
+                nombreFicha: bitacora.Id_Aprendiz && bitacora.Id_Aprendiz.Id_Ficha ? bitacora.Id_Aprendiz.Id_Ficha.Nombre : 'Sin Ficha', // Verificar si existe la ficha
+                createdAt: bitacora.createdAt.toLocaleString(), // Formatear la fecha
+                Estado: bitacora.Estado
+            }));
 
             // Responder con los resultados de la búsqueda
-            if (bitacoras.length > 0) {
-                res.json(bitacoras);
+            if (formattedBitacoras.length > 0) {
+                res.json(formattedBitacoras);
             } else {
                 res.status(404).json({ mensaje: "No hay bitácoras" });
             }
+
         } catch (error) {
             console.error("Error en getListarTodo:", error);
             res.status(500).json({ error: error.message });
         }
     },
-
 
     //   listar toda-----------------------------------------------------------------------------------------------------
     getListarTodo: async (req, res) => {
@@ -110,8 +148,8 @@ const httpBitacoras = {
             // Buscar bitácoras para los aprendices entre las fechas especificadas
             const bitacoras = await Bitacoras.find({
                 createdAt: { $gte: fechaInicial, $lte: fechaFinal },
-                Id_Aprendiz: { $in: aprendices.map(a => a._id) },
-                Estado: 'Asistio'
+                // Id_Aprendiz: { $in: aprendices.map(a => a._id) },
+                // Estado: 'Asistio'
             }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');  // Popula los datos del aprendiz
 
             // Si no hay bitácoras, responde con un mensaje adecuado
@@ -401,7 +439,7 @@ const httpBitacoras = {
                 createdAt: { $gte: startDate, $lte: endDate },
                 Id_Aprendiz: { $in: aprendices.map(a => a._id) },
                 Estado: 'Asistio'
-            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono Firma');
+            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');
 
             // Si no hay bitácoras, responde con un mensaje adecuado
             if (bitacoras.length === 0) {
@@ -413,8 +451,7 @@ const httpBitacoras = {
                 documento: bitacora.Id_Aprendiz.Documento,
                 nombre: bitacora.Id_Aprendiz.Nombre,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
-                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
-                firma:bitacora.Id_Aprendiz.Firma
+                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono
             }));
 
             res.status(200).json(formattedBitacoras);

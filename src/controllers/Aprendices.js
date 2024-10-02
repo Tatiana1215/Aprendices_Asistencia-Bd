@@ -16,8 +16,6 @@
 
 // const Aprendiz = require('../models/Aprendices')
 import Aprendiz from '../models/Aprendices.js'
-// import cloudinary from '../../config/cloudinaryConfig.js'
-// import fs from 'fs'; // Para eliminar el archivo después de subirlo
 import subirArchivo from '../helpers/subir_archivo.js';
 import * as fs from 'fs'
 import path from 'path'
