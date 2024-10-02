@@ -50,13 +50,12 @@ routers.post("/Insertar", [
     
     validarCampos,
     // validarJWT
-
-    
 ], httpAprendiz.postAprediz,)
 
 
 // ------------------------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id", [
+    validarJWT,
     check('id', 'El id no es valido').isMongoId(),
     check('Id_Ficha','El campo Ficha es obligatorio').notEmpty(),
     check('Nombre', 'El Nombre debe tener maximo 20 caracteres').isLength({ max: 20 }),
@@ -69,25 +68,24 @@ routers.put("/Actualizar/:id", [
     }),
 
     validarCampos,
-    // validarJWT
 ], httpAprendiz.putAprendiz)
 
 // ---------------------------------------------------------------------------------------------------------------------------
 routers.put("/Activar/:id", [
+    validarJWT,
     check('id', 'El id no es valido').isMongoId(),
     validarCampos,
-    // validarJWT
 ], httpAprendiz.putAprendizActivar)
 
 // ---------------------------------------------------------------------------------------------------------------------------
 routers.put("/Desactivar/:id", [
+    validarJWT,
     check('id', 'El id no es valido').isMongoId(),
     validarCampos,
-    // validarJWT
 ], httpAprendiz.putAprendizDesactivar)
 // ---
 routers.put("/cargarCloud/:id", [
-    // validarJWT,
+    validarJWT,
     check('id').isMongoId(),
     // check('id').custom(aprendicesHelper.existeAprendizID),
     validarExistaArchivo,
@@ -95,7 +93,7 @@ routers.put("/cargarCloud/:id", [
 ], httpAprendiz.cargarArchivoCloud);
 
 routers.get("/uploadClou/:id", [ // img
-    // validarJWT,
+    validarJWT,
     check('id', 'No es un ID válido').isMongoId(),
     // check('id').custom(aprendicesHelper.existeAprendizID), 
     validarCampos
