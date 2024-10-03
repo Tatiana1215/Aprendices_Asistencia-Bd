@@ -65,7 +65,10 @@ routers.put("/Actualizar/:id", [
     check('Documento', 'El documento debe tener numeros').isNumeric(),
     // check('Documento').custom(aprendizHelper.existeDocumento),
     // check('Email').custom(aprendizHelper.existeEmail),
-    check('Telefono').custom(aprendizHelper.numTelefono),
+    // check('Telefono').custom(aprendizHelper.numTelefono),
+    check('Telefono').custom(async (Telefono, { req }) => {
+        await aprendizHelper.esTelefonoId(Telefono, req.params.id);
+    }),
     check('Email').custom(async (Email, { req }) => {
         await aprendizHelper.esEmailId(Email, req.params.id);
     }),
