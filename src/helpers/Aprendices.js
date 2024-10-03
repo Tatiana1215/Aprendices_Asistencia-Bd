@@ -20,6 +20,12 @@ const aprendizHelper = {
             throw new Error(`El numero de documeto ${Documento} ya existe`)
         }
     },
+    esEmailId : async (Email, id) => {
+        const email = await Aprendiz.findOne({Email})
+        if(email && email._id.toString() !== id){
+            throw new Error(`El numero de email ${Email} ya existe`)
+        }
+    },
     
     numTelefono: async (Telefono) => {
         const unico = await Aprendiz.findOne({Telefono})

@@ -49,7 +49,7 @@ routers.post('/reset/:id', [
 
 // -------------------------------------------------------------------------------------------------------------------------------------
 routers.post("/insertar",[
-    // validarJWT,
+    validarJWT,
 check('Nombre','El campo Nombre es obligatorio').notEmpty(),
 check('Email','El campo Email es obligatorio').notEmpty().isEmail,
 check('Password','El campo password es obligatorio').notEmpty(),
@@ -62,7 +62,7 @@ validarCampos,
 
 // // -----------------------------------------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id",[
-    // validarJWT,
+    validarJWT,
     check('id','El id no es valido').isMongoId(),
     // check('Email').custom(usuarioHelper.existsEmail),
     // check('Email','El email no es correcto').isEmail(),
@@ -77,6 +77,7 @@ routers.put("/Actualizar/:id",[
 
 // --------------------------------------------------------------------------------------------------------------------------------------------
 routers.put("/Activar/:id",[
+    validarJWT,
     check('id','El no es valido').isMongoId(),
     validarCampos,
     // validarJWT
@@ -84,6 +85,7 @@ routers.put("/Activar/:id",[
 
 // -------------------------------------------------------------------------------------------------------------------------------------------
 routers.put("/Desactivar/:id",[
+    validarJWT,
     check('id','El id no es valido').isMongoId(),
     validarCampos,
     // validarJWT
