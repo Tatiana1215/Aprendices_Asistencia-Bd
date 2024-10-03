@@ -505,7 +505,7 @@ const httpBitacoras = {
                 createdAt: { $gte: startDate, $lte: endDate },
                 Id_Aprendiz: { $in: aprendices.map(a => a._id) },
                 Estado: 'Asistio'
-            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');
+            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono Firma');
 
             // Si no hay bitácoras, responde con un mensaje adecuado
             if (bitacoras.length === 0) {
@@ -517,7 +517,8 @@ const httpBitacoras = {
                 documento: bitacora.Id_Aprendiz.Documento,
                 nombre: bitacora.Id_Aprendiz.Nombre,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
-                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono
+                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
+                firma: bitacora.Id_Aprendiz.firma
             }));
 
             res.status(200).json(formattedBitacoras);
