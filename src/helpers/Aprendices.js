@@ -20,6 +20,7 @@ const aprendizHelper = {
             throw new Error(`El numero de documeto ${Documento} ya existe`)
         }
     },
+    
     numTelefono: async (Telefono) => {
         const unico = await Aprendiz.findOne({Telefono})
 

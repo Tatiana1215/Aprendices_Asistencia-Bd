@@ -47,7 +47,7 @@ routers.post("/Insertar", [
     check('Telefono', 'El numero de telefeono debe tener numeros').isNumeric(),
     check('Documento', 'El documento debe tener numeros').isNumeric(),
     check('Email').custom(aprendizHelper.existeEmail),
-    
+
     validarCampos,
     // validarJWT
 ], httpAprendiz.postAprediz,)
@@ -57,12 +57,16 @@ routers.post("/Insertar", [
 routers.put("/Actualizar/:id", [
     validarJWT,
     check('id', 'El id no es valido').isMongoId(),
-    check('Id_Ficha','El campo Ficha es obligatorio').notEmpty(),
+    check('Id_Ficha', 'El campo Ficha es obligatorio').notEmpty(),
     check('Nombre', 'El Nombre debe tener maximo 20 caracteres').isLength({ max: 20 }),
     check('Telefono', 'El numero de telefono debe tener 10 digitos').isLength({ min: 10, max: 10 }),
     check('Documento', 'El numero de documento debe se maximo de 10 caracteres ').isLength({ min: 10, max: 10 }),
     check('Telefono', 'El numero de telefeono debe tener numeros').isNumeric(),
     check('Documento', 'El documento debe tener numeros').isNumeric(),
+    // check('Documento').custom(aprendizHelper.existeDocumento),
+    check('Email').custom(aprendizHelper.existeEmail),
+    check('Telefono').custom(aprendizHelper.numTelefono),
+
     check('Documento').custom(async (Documento, { req }) => {
         await aprendizHelper.esDocumentoId(Documento, req.params.id);
     }),
