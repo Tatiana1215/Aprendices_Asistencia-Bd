@@ -98,13 +98,8 @@ const httpBitacoras = {
           if (startDate > endDate) {
             return res.status(400).json({ mensaje: "La fecha inicial no puede ser mayor que la fecha final" });
           }
-    
-          // Validar que las fechas no sean futuras
-          const today = new Date();
-          if (startDate > today || endDate > today) {
-            return res.status(400).json({ mensaje: "Las fechas no pueden ser futuras" });
-          }
-    
+
+          
           // Buscar la ficha
           const ficha = await Fichas.findOne({ Codigo: fichaNumero });
           if (!ficha) {
