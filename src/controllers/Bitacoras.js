@@ -72,7 +72,7 @@ const httpBitacoras = {
 
     //   listar toda-----------------------------------------------------------------------------------------------------
     getListarTodo: async (req, res) => {
-        const { fichaNumero, fechaInicial, fechaFinal } = req.query;
+        const { fichaNumero, FechaInicial, FechaFinal } = req.query;
     
         try {
           // Validaciones
@@ -80,13 +80,13 @@ const httpBitacoras = {
             return res.status(400).json({ mensaje: "El número de ficha es requerido" });
           }
     
-          if (!fechaInicial || !fechaFinal) {
+          if (!FechaInicial || !FechaFinal) {
             return res.status(400).json({ mensaje: "Las fechas inicial y final son requeridas" });
           }
     
           // Convertir fechas
-          const startDate = new Date(fechaInicial);
-          const endDate = new Date(fechaFinal);
+          const startDate = new Date(FechaInicial);
+          const endDate = new Date(FechaFinal);
           endDate.setHours(23, 59, 59, 999);
     
           // Validar que las fechas sean válidas
