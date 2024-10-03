@@ -519,9 +519,9 @@ const httpBitacoras = {
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
                 firma:bitacora.Id_Aprendiz.Firma
-
             }));
 
+            
             res.status(200).json(formattedBitacoras);
         } catch (error) {
             res.status(500).json({ message: error.message });
