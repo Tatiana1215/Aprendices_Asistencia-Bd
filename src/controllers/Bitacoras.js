@@ -99,7 +99,7 @@ const httpBitacoras = {
             return res.status(400).json({ mensaje: "La fecha inicial no puede ser mayor que la fecha final" });
           }
 
-          
+
           // Buscar la ficha
           const ficha = await Fichas.findOne({ Codigo: fichaNumero });
           if (!ficha) {
@@ -517,7 +517,9 @@ const httpBitacoras = {
                 documento: bitacora.Id_Aprendiz.Documento,
                 nombre: bitacora.Id_Aprendiz.Nombre,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
-                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono
+                telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
+                firma:bitacora.Id_Aprendiz.Firma
+
             }));
 
             res.status(200).json(formattedBitacoras);
