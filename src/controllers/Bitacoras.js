@@ -518,7 +518,7 @@ const httpBitacoras = {
                 nombre: bitacora.Id_Aprendiz.Nombre,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
-                firma: bitacora.Id_Aprendiz.firma
+                firma: bitacora.Id_Aprendiz.Firma
             }));
 
             res.status(200).json(formattedBitacoras);
