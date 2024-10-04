@@ -54,7 +54,7 @@ const httpBitacoras = {
                         'telefonoAprendiz': '$aprendizInfo.Telefono',
                         'emailAprendiz': '$aprendizInfo.Email',
                         'nombreFicha': '$fichaInfo.Nombre',
-                        'nombreFicha': '$fichaInfo.Codigo'
+                        'numeroFicha': '$fichaInfo.Codigo'
                     }
                 }
             ]);
@@ -155,7 +155,7 @@ const httpBitacoras = {
                         telefonoAprendiz: '$aprendizInfo.Telefono',
                         emailAprendiz: '$aprendizInfo.Email',
                         nombreFicha: '$fichaInfo.Nombre',
-                        'nombreFicha': '$fichaInfo.Codigo',
+                        numeroFicha: '$fichaInfo.Codigo',
                         createdAt: {
                             $dateToString: {
                                 format: "%d/%m/%Y %H:%M:%S",
@@ -180,7 +180,7 @@ const httpBitacoras = {
             res.status(500).json({ mensaje: 'Error al listar bitácoras', error: error.message });
         }
     },
-    
+
     //   listar por ficha-------------------------------------------------------------------------------------------------
     getListarBitacorasPorFicha: async (req, res) => {
         const { Id_Ficha } = req.params;
