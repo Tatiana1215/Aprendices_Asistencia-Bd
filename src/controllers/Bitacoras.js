@@ -442,21 +442,22 @@ const httpBitacoras = {
                 createdAt: { $gte: startDate, $lte: endDate },
                 Id_Aprendiz: { $in: aprendices.map(a => a._id) },
                 Estado: 'Asistio'
-            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono Firma');
+            }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono Firma Id_Ficha')
+            .populate('Id_Ficha', 'Nombre Codigo'); // Asegúrate de que esto esté presente;
 
             // Si no hay bitácoras, responde con un mensaje adecuado
             if (bitacoras.length === 0) {
                 return res.status(404).json({ message: 'No se encontraron bitácoras para los aprendices en esta fecha con el estado "Asistió"' });
             }
-
+           // Accede al aprendiz
             // Formatear la respuesta para incluir los valores deseados
             const formattedBitacoras = bitacoras.map(bitacora => ({
                 documento: bitacora.Id_Aprendiz.Documento,
                 nombre: bitacora.Id_Aprendiz.Nombre,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
-                nombreFicha: bitacora.Id_Aprendiz.Id_Ficha.Nombre,
-                numeroFicha: bitacora.Id_Aprendiz.Id_Ficha.Codigo,
+                nombreFicha:ficha.Nombre,
+                numeroFicha: ficha.Codigo,
                 firma: bitacora.Id_Aprendiz.Firma
             }));
 
