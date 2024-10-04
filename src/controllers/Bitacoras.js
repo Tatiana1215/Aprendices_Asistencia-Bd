@@ -53,7 +53,8 @@ const httpBitacoras = {
                         'documentoAprendiz': '$aprendizInfo.Documento',
                         'telefonoAprendiz': '$aprendizInfo.Telefono',
                         'emailAprendiz': '$aprendizInfo.Email',
-                        'nombreFicha': '$fichaInfo.Nombre'
+                        'nombreFicha': '$fichaInfo.Nombre',
+                        'nombreFicha': '$fichaInfo.Codigo'
                     }
                 }
             ]);
@@ -73,177 +74,113 @@ const httpBitacoras = {
     //   listar toda-----------------------------------------------------------------------------------------------------
     getListarTodo: async (req, res) => {
         const { fichaNumero, FechaInicial, FechaFinal } = req.query;
-    
+
         try {
-          // Validaciones
-          if (!fichaNumero) {
-            return res.status(400).json({ mensaje: "El número de ficha es requerido" });
-          }
-    
-          if (!FechaInicial || !FechaFinal) {
-            return res.status(400).json({ mensaje: "Las fechas inicial y final son requeridas" });
-          }
-    
-          // Convertir fechas
-          const startDate = new Date(FechaInicial);
-          const endDate = new Date(FechaFinal);
-          endDate.setHours(23, 59, 59, 999);
-    
-          // Validar que las fechas sean válidas
-          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-            return res.status(400).json({ mensaje: "Formato de fecha no válido" });
-          }
-    
-          // Validar que la fecha inicial no sea mayor que la fecha final
-          if (startDate > endDate) {
-            return res.status(400).json({ mensaje: "La fecha inicial no puede ser mayor que la fecha final" });
-          }
-
-
-          // Buscar la ficha
-          const ficha = await Fichas.findOne({ Codigo: fichaNumero });
-          if (!ficha) {
-            return res.status(404).json({ mensaje: 'Ficha no encontrada' });
-          }
-    
-          const pipeline = [
-            // Etapa 1: Filtrar bitácoras por fecha
-            {
-              $match: {
-                createdAt: { $gte: startDate, $lte: endDate }
-              }
-            },
-            // Etapa 2: Unir con la colección de Aprendices
-            {
-              $lookup: {
-                from: 'aprendizs',
-                localField: 'Id_Aprendiz',
-                foreignField: '_id',
-                as: 'aprendizInfo'
-              }
-            },
-            // Etapa 3: Deshacer el array resultante del lookup
-            {
-              $unwind: '$aprendizInfo'
-            },
-            // Etapa 4: Unir con la colección de Fichas
-            {
-              $lookup: {
-                from: 'fichas',
-                localField: 'aprendizInfo.Id_Ficha',
-                foreignField: '_id',
-                as: 'fichaInfo'
-              }
-            },
-            // Etapa 5: Deshacer el array resultante del lookup
-            {
-              $unwind: '$fichaInfo'
-            },
-            // Etapa 6: Filtrar por número de ficha
-            {
-              $match: {
-                'fichaInfo.Codigo': fichaNumero
-              }
-            },
-            // Etapa 7: Proyectar los campos necesarios
-            {
-              $project: {
-                _id: 1,
-                nombreAprendiz: '$aprendizInfo.Nombre',
-                documentoAprendiz: '$aprendizInfo.Documento',
-                telefonoAprendiz: '$aprendizInfo.Telefono',
-                emailAprendiz: '$aprendizInfo.Email',
-                nombreFicha: '$fichaInfo.Nombre',
-                createdAt: {
-                  $dateToString: {
-                    format: "%d/%m/%Y %H:%M:%S",
-                    date: "$createdAt",
-                    timezone: "America/Bogota"
-                  }
-                },
-                Estado: 1
-              }
+            // Validaciones
+            if (!fichaNumero) {
+                return res.status(400).json({ mensaje: "El número de ficha es requerido" });
             }
-          ];
-    
-          const bitacoras = await Bitacoras.aggregate(pipeline);
-    
-          if (bitacoras.length === 0) {
-            return res.status(404).json({ mensaje: 'No se encontraron bitácoras para los parámetros proporcionados' });
-          }
-    
-          res.json(bitacoras);
+
+            if (!FechaInicial || !FechaFinal) {
+                return res.status(400).json({ mensaje: "Las fechas inicial y final son requeridas" });
+            }
+
+            // Convertir fechas
+            const startDate = new Date(FechaInicial);
+            const endDate = new Date(FechaFinal);
+            endDate.setHours(23, 59, 59, 999);
+
+            // Validar que las fechas sean válidas
+            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                return res.status(400).json({ mensaje: "Formato de fecha no válido" });
+            }
+
+            // Validar que la fecha inicial no sea mayor que la fecha final
+            if (startDate > endDate) {
+                return res.status(400).json({ mensaje: "La fecha inicial no puede ser mayor que la fecha final" });
+            }
+
+
+            // Buscar la ficha
+            const ficha = await Fichas.findOne({ Codigo: fichaNumero });
+            if (!ficha) {
+                return res.status(404).json({ mensaje: 'Ficha no encontrada' });
+            }
+
+            const pipeline = [
+                // Etapa 1: Filtrar bitácoras por fecha
+                {
+                    $match: {
+                        createdAt: { $gte: startDate, $lte: endDate }
+                    }
+                },
+                // Etapa 2: Unir con la colección de Aprendices
+                {
+                    $lookup: {
+                        from: 'aprendizs',
+                        localField: 'Id_Aprendiz',
+                        foreignField: '_id',
+                        as: 'aprendizInfo'
+                    }
+                },
+                // Etapa 3: Deshacer el array resultante del lookup
+                {
+                    $unwind: '$aprendizInfo'
+                },
+                // Etapa 4: Unir con la colección de Fichas
+                {
+                    $lookup: {
+                        from: 'fichas',
+                        localField: 'aprendizInfo.Id_Ficha',
+                        foreignField: '_id',
+                        as: 'fichaInfo'
+                    }
+                },
+                // Etapa 5: Deshacer el array resultante del lookup
+                {
+                    $unwind: '$fichaInfo'
+                },
+                // Etapa 6: Filtrar por número de ficha
+                {
+                    $match: {
+                        'fichaInfo.Codigo': fichaNumero
+                    }
+                },
+                // Etapa 7: Proyectar los campos necesarios
+                {
+                    $project: {
+                        _id: 1,
+                        nombreAprendiz: '$aprendizInfo.Nombre',
+                        documentoAprendiz: '$aprendizInfo.Documento',
+                        telefonoAprendiz: '$aprendizInfo.Telefono',
+                        emailAprendiz: '$aprendizInfo.Email',
+                        nombreFicha: '$fichaInfo.Nombre',
+                        'nombreFicha': '$fichaInfo.Codigo',
+                        createdAt: {
+                            $dateToString: {
+                                format: "%d/%m/%Y %H:%M:%S",
+                                date: "$createdAt",
+                                timezone: "America/Bogota"
+                            }
+                        },
+                        Estado: 1
+                    }
+                }
+            ];
+
+            const bitacoras = await Bitacoras.aggregate(pipeline);
+
+            if (bitacoras.length === 0) {
+                return res.status(404).json({ mensaje: 'No se encontraron bitácoras para los parámetros proporcionados' });
+            }
+
+            res.json(bitacoras);
         } catch (error) {
-          console.error('Error al listar bitácoras:', error);
-          res.status(500).json({ mensaje: 'Error al listar bitácoras', error: error.message });
+            console.error('Error al listar bitácoras:', error);
+            res.status(500).json({ mensaje: 'Error al listar bitácoras', error: error.message });
         }
-      },
-    // getListarTodo: async (req, res) => {
-    //     const { fichaNumero, FechaInicial, FechaFinal } = req.query;
-
-    //     try {
-    //         // Buscar el ObjectId de la ficha usando el número de ficha
-    //         const ficha = await Fichas.findOne({ Codigo: fichaNumero });
-    //         if (!ficha) {
-    //             return res.status(404).json({ message: 'Ficha no encontrada' });
-    //         }
-
-    //         // Buscar todos los aprendices que tienen esta ficha
-    //         const aprendices = await Aprendices.find({ Id_Ficha: ficha._id });
-
-    //         if (aprendices.length === 0) {
-    //             return res.status(404).json({ message: 'No se encontraron aprendices para esta ficha' });
-    //         }
-
-    //         // Validar que las fechas estén proporcionadas
-    //         if (!FechaInicial || !FechaFinal) {
-    //             return res.status(400).json({ message: "Fechas no proporcionadas" });
-    //         }
-
-    //         // Convertir las fechas a objetos Date
-    //         const fechaInicial = new Date(FechaInicial);
-    //         const fechaFinal = new Date(FechaFinal);
-
-
-    //         // Ajustar la fecha final al final del día
-    //         fechaFinal.setHours(23, 59, 59, 999);
-
-    //         // Validar que las fechas sean válidas
-    //         if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
-    //             return res.status(400).json({ message: "Formato de fecha no válido" });
-    //         }
-
-    //         // Buscar bitácoras para los aprendices entre las fechas especificadas
-    //         const bitacoras = await Bitacoras.find({
-    //             createdAt: { $gte: fechaInicial, $lte: fechaFinal },
-    //             Id_Aprendiz: { $in: aprendices.map(a => a._id) }
-    //             // Id_Aprendiz: { $in: aprendices.map(a => a._id) },
-    //             // Estado: 'Asistio'
-    //         }).populate('Id_Aprendiz', 'Nombre Documento Email Telefono');  // Popula los datos del aprendiz
-
-    //         // Si no hay bitácoras, responde con un mensaje adecuado
-    //         if (bitacoras.length === 0) {
-    //             return res.status(404).json({ message: 'No se encontraron bitácoras para los aprendices en el rango de fechas con el estado "Asistió"' });
-    //         }
-
-    //         // Formatear la respuesta para incluir los valores deseados
-    //         const formattedBitacoras = bitacoras.map(bitacora => ({
-    //             nombreAprendiz: bitacora.Id_Aprendiz.Nombre,
-    //             documentoAprendiz: bitacora.Id_Aprendiz.Documento,
-    //             telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
-    //             emailAprendiz: bitacora.Id_Aprendiz.Email,
-    //             nombreFicha: ficha.Nombre,  // Asegúrate de que esta propiedad está disponible en el modelo
-    //             createdAt: bitacora.createdAt.toLocaleString(), // Formatear la fecha
-    //             Estado: bitacora.Estado
-    //         }));
-
-    //         res.status(200).json(formattedBitacoras);
-    //     } catch (error) {
-    //         console.error("Error en ", error);
-    //         res.status(500).json({ message: error.message });
-    //     }
-    // },
-
+    },
+    
     //   listar por ficha-------------------------------------------------------------------------------------------------
     getListarBitacorasPorFicha: async (req, res) => {
         const { Id_Ficha } = req.params;
@@ -518,10 +455,10 @@ const httpBitacoras = {
                 nombre: bitacora.Id_Aprendiz.Nombre,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
-                firma:bitacora.Id_Aprendiz.Firma
+                firma: bitacora.Id_Aprendiz.Firma
             }));
 
-            
+
             res.status(200).json(formattedBitacoras);
         } catch (error) {
             res.status(500).json({ message: error.message });
