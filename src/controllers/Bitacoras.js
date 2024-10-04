@@ -455,6 +455,8 @@ const httpBitacoras = {
                 nombre: bitacora.Id_Aprendiz.Nombre,
                 emailAprendiz: bitacora.Id_Aprendiz.Email,
                 telefonoAprendiz: bitacora.Id_Aprendiz.Telefono,
+                nombreFicha: bitacora.Id_Aprendiz.Id_Ficha.Nombre,
+                numeroFicha: bitacora.Id_Aprendiz.Id_Ficha.Codigo,
                 firma: bitacora.Id_Aprendiz.Firma
             }));
 
