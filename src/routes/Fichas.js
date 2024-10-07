@@ -36,6 +36,7 @@ routers.post("/crear", [
 
 // --------------------------------------------------------------------------------------------------------------
 routers.put("/Actualizar/:id", [
+    validarJWT,
     check('id', 'el id es invalido').isMongoId(),
     // check('Codigo').custom(fichaHelper.existsCodigo),
     check('Codigo', 'El Codigo debe tener 7 caracteres').isLength({ min:7, max:7 }),
@@ -51,6 +52,7 @@ routers.put("/Actualizar/:id", [
 
 // ----------------------------------------------------------------------------------------------------------------
 routers.put("/Activar/:id", [
+    validarJWT,
     check('id', 'El id valido').isMongoId(),
     // check('Estado', 'EL campo Estado es obligatorio').notEmpty(),
     validarCampos,
@@ -59,6 +61,7 @@ routers.put("/Activar/:id", [
 
 // -----------------------------------------------------------------------------------------------------------------
 routers.put("/Desactivar/:id", [
+    validarJWT,
     check('id', 'El id no es valido').isMongoId(),
     // check('Estado','El campo de Estado es obligatorio').notEmpty(),
     validarCampos,

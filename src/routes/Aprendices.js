@@ -47,7 +47,7 @@ routers.post("/Insertar", [
     check('Telefono', 'El numero de telefeono debe tener numeros').isNumeric(),
     check('Documento', 'El documento debe tener numeros').isNumeric(),
     check('Email').custom(aprendizHelper.existeEmail),
-    
+
     validarCampos,
     // validarJWT
 ], httpAprendiz.postAprediz,)
@@ -63,6 +63,15 @@ routers.put("/Actualizar/:id", [
     check('Documento', 'El numero de documento debe se maximo de 10 caracteres ').isLength({ min: 10, max: 10 }),
     check('Telefono', 'El numero de telefeono debe tener numeros').isNumeric(),
     check('Documento', 'El documento debe tener numeros').isNumeric(),
+    // check('Documento').custom(aprendizHelper.existeDocumento),
+    // check('Email').custom(aprendizHelper.existeEmail),
+    // check('Telefono').custom(aprendizHelper.numTelefono),
+    check('Telefono').custom(async (Telefono, { req }) => {
+        await aprendizHelper.esTelefonoId(Telefono, req.params.id);
+    }),
+    check('Email').custom(async (Email, { req }) => {
+        await aprendizHelper.esEmailId(Email, req.params.id);
+    }),
     check('Documento').custom(async (Documento, { req }) => {
         await aprendizHelper.esDocumentoId(Documento, req.params.id);
     }),
