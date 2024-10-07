@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 
 const aprendicesSchema = new mongoose.Schema({
     Documento: { type: String, require: true, unique: true, min: 10 },
-    Nombre: { type: String, require: true, max: 20 },
+    Nombre: { type: String, require: true, max: 50 },
     Telefono: { type: String, require: true, unique: true, min: 10 },
     Email: { type: String, require: true, unique: true },
     Estado: { type: Number, require: true, default: 1 },
