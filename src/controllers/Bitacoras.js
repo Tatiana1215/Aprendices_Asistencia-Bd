@@ -171,7 +171,7 @@ const httpBitacoras = {
             const bitacoras = await Bitacoras.aggregate(pipeline);
 
             if (bitacoras.length === 0) {
-                return res.status(404).json({ mensaje: 'No se encontraron bitácoras para los parámetros proporcionados' });
+                return res.status(404).json({ mensaje: 'No hay asistencias registradas' });
             }
 
             res.json(bitacoras);
@@ -447,7 +447,7 @@ const httpBitacoras = {
 
             // Si no hay bitácoras, responde con un mensaje adecuado
             if (bitacoras.length === 0) {
-                return res.status(404).json({ message: 'No se encontraron bitácoras para los aprendices en esta fecha con el estado "Asistió"' });
+                return res.status(404).json({ message: 'No hay asistencias registradas.' });
             }
            // Accede al aprendiz
             // Formatear la respuesta para incluir los valores deseados
