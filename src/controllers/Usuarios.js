@@ -49,6 +49,7 @@ const httpUsarios = {
       res.status(500).json({ error });
     }
   },
+  
   //login--------------------------------------------------------------------------------------------------------------
   postLogin: async (req, res) => {
     const { Email, Password } = req.body;
