@@ -30,14 +30,14 @@ const httpUsarios = {
   //cear--------------------------------------------------------------------------------------------------------------
   postUsuario: async (req, res) => {
     try {
-      const { Email, Password, Nombre } = req.body;
-      const usuarios = new Usuarios({ Email, Password, Nombre });
+      const { Email, Nombre , Password} = req.body;
+      const usuarios = new Usuarios({ Email, Nombre, Password });
 
       const salt = bcrypt.genSaltSync(10);//Se utiliza para incriptar la contraseña
       usuarios.Password = bcrypt.hashSync(Password, salt);
 
       await usuarios.save();
-      // res.json({mensaje:"Usuario creado"})
+      res.json({mensaje:"Usuario creado"})
       res.json(usuarios);
     } catch (error) {
       res.status(500).json({ error });

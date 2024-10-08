@@ -152,12 +152,11 @@ routers.post('/reset/:id', [
 
 // -------------------------------------------------------------------------------------------------------------------------------------
 routers.post("/insertar",[
-    // validarJWT,
+// validarJWT,
 check('Nombre','El campo Nombre es obligatorio').notEmpty(),
 check('Email','El campo Email es obligatorio').notEmpty(),
 check('Password','El campo password es obligatorio').notEmpty(),
 check('Email').custom(usuarioHelper.existsEmail),
-// check('Password').custom(usuarioHelper.existePassword),
 check('Nombre','El Nombre debe tener maximo 30 caracteres').isLength({max:30}),
 check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
 validarCampos,
