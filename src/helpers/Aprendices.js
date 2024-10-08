@@ -29,7 +29,7 @@ const aprendizHelper = {
     esEmailId : async (Email, id) => {
         const email = await Aprendiz.findOne({Email})
         if(email && email._id.toString() !== id){
-            throw new Error(`El numero de email ${Email} ya existe`)
+            throw new Error(`El email ${Email} ya existe`)
         }
     },
     

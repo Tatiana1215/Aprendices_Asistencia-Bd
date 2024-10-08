@@ -46,7 +46,7 @@ const httpUsarios = {
       // res.json({mensaje:"Usuario creado"})
       res.json(usuarios);
     } catch (error) {
-      res.status(400).json({ error });
+      res.status(500).json({ error });
     }
   },
   //login--------------------------------------------------------------------------------------------------------------
