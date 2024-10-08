@@ -11,6 +11,7 @@ import nodemailer from 'nodemailer';
 import { generarJWT } from '../middlewares/validarJWT.js';
 import crypt from 'crypto'
 
+
 const httpUsarios = {
   // listar----------------------------------------------------------------------------------------------------------
   getUsuarios: async (req, res) => {
