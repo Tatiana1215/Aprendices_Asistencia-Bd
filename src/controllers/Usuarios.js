@@ -4,20 +4,12 @@
 // eliminar
 // Activar
 // Desactivar
-// import Usuarios from '../models/Usuarios.js'; 
+
 import Usuarios from '../models/Usuarios.js';
 import bcrypt from "bcryptjs";
-// const bcrypt = require('bcryptjs');
-
 import nodemailer from 'nodemailer';
-
-// import bcryptjs from "bcrypt";
 import { generarJWT } from '../middlewares/validarJWT.js';
 import crypt from 'crypto'
-// const bcryptjs = require('bcrypt')
-;
-
-
 
 const httpUsarios = {
   // listar----------------------------------------------------------------------------------------------------------
@@ -33,6 +25,7 @@ const httpUsarios = {
       res.status(400).json({ error });
     }
   },
+
   //cear--------------------------------------------------------------------------------------------------------------
   postUsuario: async (req, res) => {
     try {
@@ -49,7 +42,7 @@ const httpUsarios = {
       res.status(500).json({ error });
     }
   },
-  
+
   //login--------------------------------------------------------------------------------------------------------------
   postLogin: async (req, res) => {
     const { Email, Password } = req.body;
