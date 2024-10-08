@@ -37,7 +37,7 @@ const httpUsarios = {
       usuarios.Password = bcrypt.hashSync(Password, salt);
 
       await usuarios.save();
-      res.json({mensaje:"Usuario creado"})
+      
       res.json(usuarios);
     } catch (error) {
       res.status(500).json({ error });
