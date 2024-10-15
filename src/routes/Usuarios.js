@@ -166,7 +166,6 @@ validarCampos,
 routers.put("/Actualizar/:id",[
     // validarJWT,
     check('id','El id no es valido').isMongoId(),
-    check('Password','La contraseña debe tener minimo 10 caracteres y maximo 15').isLength({min:10, max:15}),
     check('Nombre','El Nombre debe tener maximo 30 caracteres').isLength({max:30}),
     check('Email').custom(async (Email, { req }) => {
         await usuarioHelper.esEmailid(Email, req.params.id);

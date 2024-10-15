@@ -30,14 +30,14 @@ const httpUsarios = {
   //cear--------------------------------------------------------------------------------------------------------------
   postUsuario: async (req, res) => {
     try {
-      const { Email, Nombre , Password} = req.body;
+      const { Email, Nombre, Password } = req.body;
       const usuarios = new Usuarios({ Email, Nombre, Password });
 
       const salt = bcrypt.genSaltSync(10);//Se utiliza para incriptar la contraseña
       usuarios.Password = bcrypt.hashSync(Password, salt);
 
       await usuarios.save();
-      
+
       res.json(usuarios);
     } catch (error) {
       res.status(500).json({ error });
@@ -152,30 +152,25 @@ const httpUsarios = {
       if (!usuario) {
         return res.status(404).json({ mensaje: "No existe usuario con ese email" });
       }
-  
 
-usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
-  const codigoVerificacion = Math.floor(100000 + Math.random() * 900000); // Genera un código de 6 dígitos
+
+      usuario.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+      const codigoVerificacion = Math.floor(100000 + Math.random() * 900000); // Genera un código de 6 dígitos
       usuario.resetPasswordCodigo = codigoVerificacion;
       await usuario.save();
-   
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false, // Evita errores SSL en desarrollo
-  }
-});
 
-      //     // Enviar correo con el enlace para restablecer la contraseña
-    
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+        tls: {
+          rejectUnauthorized: false, // Evita errores SSL en desarrollo
+        }
+      });
 
-      
-      
       const mailOptions = {
         to: usuario.Email,
         from: process.env.EMAIL_USER,
@@ -186,17 +181,10 @@ const transporter = nodemailer.createTransport({
         Si no solicitaste esto, simplemente ignora este correo y tu contraseña no cambiará.\n`,
       };
 
-      // transporter.sendMail(mailOptions, (err) => {
-      //   if (err) {
-      //     return res.status(500).json({ mensaje: "Error enviando el correo" });
-      //   }
-      //   res.json({ mensaje: "Correo enviado con éxito" });
-      // });
-
       transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
           console.error("Error enviando el correo:", err); // Imprime detalles del error
-          return res.status(500).json({ mensaje: "Error enviando el correo", error: err.mensaje});
+          return res.status(500).json({ mensaje: "Error enviando el correo", error: err.mensaje });
         }
         res.json({ mensaje: "Correo enviado con éxito", info });
       });
@@ -227,7 +215,7 @@ const transporter = nodemailer.createTransport({
   },
   // // Restablecer contraseña---------------------------------------------------------------------------------------------------------------------
   restablecerContrasena: async (req, res) => {
-    const { id  } = req.params;
+    const { id } = req.params;
     const { oldpassword, Password } = req.body;
 
     try {
@@ -235,7 +223,7 @@ const transporter = nodemailer.createTransport({
       //   resetPasswordToken: token,
       //   resetPasswordExpires: { $gt: Date.now() },
       // });
-      const  usuario = await Usuarios.findById(id)
+      const usuario = await Usuarios.findById(id)
       if (!usuario) {
         return res.status(400).json({ mensaje: "El usuario no existe" });
       }
